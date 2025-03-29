@@ -1,6 +1,6 @@
 export const blogInfo = {
-  name: "SaaS Starter Blog",
-  description: "A sample blog",
+  name: "Nanowrit Labs Blog",
+  description: "A work in progress",
 }
 
 export type BlogPost = {

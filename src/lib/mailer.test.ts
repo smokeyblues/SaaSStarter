@@ -60,8 +60,8 @@ describe("mailer", () => {
         from_email: "test@example.com",
         template_name: "welcome_email",
         template_properties: {
-          companyName: "Test Company",
-          WebsiteBaseUrl: "https://test.com",
+          companyName: "Nanowrit Labs",
+          WebsiteBaseUrl: "https://nanowritlabs.com",
         },
       })
 

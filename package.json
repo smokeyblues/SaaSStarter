@@ -1,18 +1,18 @@
 {
-  "name": "cmsassstarter",
+  "name": "saasstarter",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test": "vitest",
-    "test_run": "vitest run",
-    "lint": "eslint .",
+    "dev": "vite dev",
     "format": "prettier --write --plugin prettier-plugin-svelte ./",
-    "format_check": "prettier --check --plugin prettier-plugin-svelte ./"
+    "format_check": "prettier --check --plugin prettier-plugin-svelte ./",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test_run": "vitest run"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.0",
@@ -51,7 +51,9 @@
     "@supabase/supabase-js": "^2.45.2",
     "handlebars": "^4.7.8",
     "resend": "^3.5.0",
-    "stripe": "^13.3.0"
+    "sst": "3.10.13",
+    "stripe": "^13.3.0",
+    "svelte-kit-sst": "2.43.5"
   },
   "overrides": {
     "@supabase/auth-ui-svelte": {

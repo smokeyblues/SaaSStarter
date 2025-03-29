@@ -24,14 +24,16 @@
       />
     </a>
   </div>
-  <div class="text-lg text-center">A demo blog with sample content.</div>
+  <div class="text-lg text-center">A work in progress.</div>
 
   {#each sortedBlogPosts as post}
     <a href={post.link}>
       <div class="card my-6 bg-white shadow-xl flex-row overflow-hidden">
-        <div class="flex-none w-6 md:w-32 bg-secondary"></div>
+        <div
+          class="flex-none w-6 md:w-32 bg-radial-[at_75%_25%] from-amber-600 to-purple-700"
+        ></div>
         <div class="py-6 px-6">
-          <div class="text-xl">{post.title}</div>
+          <div class="text-xl text-cyan-950">{post.title}</div>
           <div class="text-sm text-accent">
             {post.parsedDate?.toLocaleDateString("en-US", {
               month: "short",
