@@ -241,7 +241,7 @@
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
           >story</span
-        >,
+        >
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
           >experiences</span
