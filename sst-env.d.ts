@@ -5,25 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "MyWeb": {
-      "type": "sst.aws.SvelteKit"
-    }
-    "SB_ANON_KEY": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "SB_SRV_ROLE": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "SB_URL": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "STRIPE_SECRET_KEY": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />

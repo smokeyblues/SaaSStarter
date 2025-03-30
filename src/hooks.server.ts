@@ -1,20 +1,15 @@
 // src/hooks.server.ts
-// import { PRIVATE_SUPABASE_SERVICE_ROLE } from "$env/static/private"
-// import {
-//   PUBLIC_SUPABASE_ANON_KEY,
-//   PUBLIC_SUPABASE_URL,
-// } from "$env/static/public"
-import { Resource } from "sst";
+import { PRIVATE_SUPABASE_SERVICE_ROLE } from "$env/static/private"
+import {
+  PUBLIC_SUPABASE_ANON_KEY,
+  PUBLIC_SUPABASE_URL,
+} from "$env/static/public"
 import { createServerClient } from "@supabase/ssr"
 import { createClient } from "@supabase/supabase-js"
 import type { Handle } from "@sveltejs/kit"
 import { sequence } from "@sveltejs/kit/hooks"
 
 export const supabase: Handle = async ({ event, resolve }) => {
-  const PUBLIC_SUPABASE_ANON_KEY = Resource.SB_ANON_KEY.value;
-  const PUBLIC_SUPABASE_URL = Resource.SB_URL.value;
-  const PRIVATE_SUPABASE_SERVICE_ROLE = Resource.SB_SRV_ROLE.value;
-
   event.locals.supabase = createServerClient(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
