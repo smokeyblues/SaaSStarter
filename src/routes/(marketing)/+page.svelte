@@ -237,21 +237,21 @@
         class="text-4xl md:text-6xl font-bold px-2"
         style="line-height: 1.2;"
       >
-        Deliver
+        Create, Produce, and Manage your
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
-          >story</span
+          >Transmedia</span
         >
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
-          >experiences</span
+          >Projects</span
         >
-        across
+        from
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
-          >your own</span
+          >one</span
         >
-        <span>Multiverse</span>
+        <span>Platform</span>
       </div>
       <div
         class="mt-6 md:mt-4 flex flex-row flex-wrap gap-4 place-content-center"

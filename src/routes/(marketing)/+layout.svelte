@@ -11,7 +11,10 @@
 
 <div class="navbar bg-base-100 container mx-auto">
   <div class="flex-1">
-    <a class="btn btn-ghost normal-case text-xl" href="/">{WebsiteName}</a>
+    <a
+      class="btn btn-ghost normal-case text-4xl font-bold font-cinzel-decorative"
+      href="/">{WebsiteName}</a
+    >
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1 hidden sm:flex font-bold text-lg">
@@ -88,6 +91,10 @@
       <a class="link link-hover my-1" href="/pricing">Pricing</a>
       <a class="link link-hover my-1" href="/blog">Blog</a>
       <a class="link link-hover my-1" href="/contact_us">Contact Us</a>
+      <a class="link link-hover mb-1" href="/privacy-policy">Privacy Policy</a>
+      <a class="link link-hover mb-1" href="/terms-of-service"
+        >Terms of Service</a
+      >
     </nav>
     <aside>
       <span class="footer-title opacity-80">Sponsor</span>
