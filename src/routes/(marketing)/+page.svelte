@@ -240,18 +240,17 @@
         Create, Produce, and Manage your
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
-          >Transmedia</span
+          >Transmedia Story Experiences</span
         >
-        <span
+        <!-- <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
-          >Projects</span
-        >
-        from
+        ></span> -->
+        <!-- from
         <span
           class="underline decoration-secondary decoration-4 md:decoration-[6px]"
           >one</span
         >
-        <span>Platform</span>
+        <span>Platform</span> -->
       </div>
       <div
         class="mt-6 md:mt-4 flex flex-row flex-wrap gap-4 place-content-center"
@@ -318,8 +317,9 @@
               >
                 <button
                   class="btn btn-xs btn-outline rounded-full btn-primary min-w-[100px]"
-                  >{feature.linkText ? feature.linkText : "Try It"}</button
                 >
+                  {feature.linkText ? feature.linkText : "Try It"}
+                </button>
               </a>
             {/if}
           </div>

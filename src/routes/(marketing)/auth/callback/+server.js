@@ -23,5 +23,6 @@ export const GET = async ({ url, locals: { supabase } }) => {
     redirect(303, next)
   }
 
-  redirect(303, "/account")
+  // my changes
+  redirect(303, "/dashboard")
 }
