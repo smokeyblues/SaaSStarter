@@ -15,6 +15,13 @@ export type BlogPost = {
 // Create a page in the "(posts)" directory for each entry
 const blogPosts: BlogPost[] = [
   {
+    // title: "Example Blog Post",
+    title: "What is Transmedia Storytelling?",
+    description: "Telling One Story Through Many Media.",
+    link: "/blog/what_is_transmedia_storytelling",
+    date: "2025-04-03",
+  },
+  {
     title: "How we built a beautiful 41kb SaaS website with this template",
     description: "How to use this template you to bootstrap your own site.",
     link: "/blog/how_we_built_our_41kb_saas_website",
@@ -25,12 +32,6 @@ const blogPosts: BlogPost[] = [
     description: "Even more example content!",
     link: "/blog/awesome_post",
     date: "2022-9-23",
-  },
-  {
-    title: "Example Blog Post",
-    description: "A sample blog post, showing our blog engine",
-    link: "/blog/example_blog_post",
-    date: "2023-03-13",
   },
 ]
 
