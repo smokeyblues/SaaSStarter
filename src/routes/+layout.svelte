@@ -1,5 +1,8 @@
 <script lang="ts">
   import "../app.css"
+  import posthog from "posthog-js"
+  import { browser } from "$app/environment"
+  import { onMount } from "svelte"
   import { navigating } from "$app/stores"
   import { expoOut } from "svelte/easing"
   import { slide } from "svelte/transition"
@@ -8,6 +11,16 @@
   }
 
   let { children }: Props = $props()
+
+  onMount(() => {
+    if (browser) {
+      posthog.init("phc_bzusV1hfMzSbTeMmMI5wAUCrIYbdN49hUZcPm8y9B7W", {
+        api_host: "https://us.i.posthog.com",
+        person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+      })
+    }
+    return
+  })
 </script>
 
 {#if $navigating}
