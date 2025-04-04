@@ -24,5 +24,5 @@ export const GET = async ({ url, locals: { supabase } }) => {
   }
 
   // my changes
-  redirect(303, "/dashboard")
+  redirect(303, "/projects")
 }

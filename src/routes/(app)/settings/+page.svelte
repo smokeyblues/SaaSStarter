@@ -6,7 +6,7 @@
       >
         Settings
       </h1>
-      <a href="/dashboard">← back to dashboard</a>
+      <a href="/projects">← back to projects</a>
     </div>
   </div>
 </div>
