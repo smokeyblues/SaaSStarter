@@ -91,10 +91,10 @@
       <a class="link link-hover my-1" href="/pricing">Pricing</a>
       <a class="link link-hover my-1" href="/blog">Blog</a>
       <a class="link link-hover my-1" href="/contact_us">Contact Us</a>
-      <a class="link link-hover mb-1" href="/privacy-policy">Privacy Policy</a>
+      <!-- <a class="link link-hover mb-1" href="/privacy-policy">Privacy Policy</a>
       <a class="link link-hover mb-1" href="/terms-of-service"
         >Terms of Service</a
-      >
+      > -->
     </nav>
     <aside>
       <span class="footer-title opacity-80">Sponsor</span>
