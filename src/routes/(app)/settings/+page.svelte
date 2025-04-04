@@ -4,8 +4,9 @@
       <h1
         class="ext-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-primary to-accent pb-2"
       >
-        Dashboard
+        Settings
       </h1>
+      <a href="/dashboard">← back to dashboard</a>
     </div>
   </div>
 </div>

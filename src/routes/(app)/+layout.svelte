@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { WebsiteName } from "./../../../config"
-  import "./../../../app.css"
+  import { WebsiteName } from "../../config"
+  import "./../../app.css"
 
   interface Props {
     children?: import("svelte").Snippet
@@ -18,8 +18,8 @@
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1 hidden sm:flex font-bold text-lg">
-      <li class="md:mx-2"><a href="/blog">Blog</a></li>
-      <li class="md:mx-2"><a href="/(app)/account">Account</a></li>
+      <!-- <li class="md:mx-2"><a href="/blog">Blog</a></li> -->
+      <li class="md:mx-2"><a href="/settings">Settings</a></li>
       <li class="md:mx-2"><a href="/account/sign_out">Logout</a></li>
       <li class="md:mx-0">
         <a href="/search" aria-label="Search">
