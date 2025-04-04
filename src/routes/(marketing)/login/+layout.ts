@@ -34,7 +34,7 @@ export const load = async ({ fetch, data, depends }) => {
   const { session, user } = await load_helper(data.session, supabase)
   if (session && user) {
     // my changes:
-    redirect(303, "/projects")
+    redirect(303, "/dashboard")
   }
 
   const url = data.url

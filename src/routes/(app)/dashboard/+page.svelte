@@ -4,7 +4,7 @@
       <h1
         class="ext-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-primary to-accent pb-2"
       >
-        Projects
+        Dashboard
       </h1>
     </div>
   </div>
