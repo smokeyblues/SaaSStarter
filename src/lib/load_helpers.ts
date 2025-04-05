@@ -9,7 +9,8 @@ export const load_helper = async (
   // on server populated on server by LayoutData, using authGuard hook
   let session = server_session
   if (isBrowser()) {
-    // Only call getSession in browser where it's safe.
+    // Add a small delay to ensure session is properly initialized
+    await new Promise((resolve) => setTimeout(resolve, 100))
     const getSessionResponse = await supabase.auth.getSession()
     session = getSessionResponse.data.session
   }
