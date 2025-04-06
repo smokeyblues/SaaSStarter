@@ -45,7 +45,7 @@
   </div>
 {:else}
   <!-- POPULATED STATE: User has teams -->
-  <div>
+  <div class="mx-auto max-w-4xl">
     <h1 class="text-3xl font-bold mb-4">Your Dashboard</h1>
 
     <section class="mb-8">
@@ -58,8 +58,14 @@
               <h3 class="card-title">{teamMembership.teams.name}</h3>
               <p>Your role: {teamMembership.role}</p>
               <div class="card-actions justify-end">
-                <button class="btn btn-secondary btn-sm">Create Project</button>
-                <button class="btn btn-ghost btn-sm">View Team</button>
+                <a
+                  href="/projects/create?teamId={teamMembership.teams.id}"
+                  class="btn btn-secondary btn-sm">Create Project</a
+                >
+                <a
+                  href="/teams/{teamMembership.teams.id}"
+                  class="btn btn-ghost btn-sm">View Team</a
+                >
               </div>
             </div>
           </div>
