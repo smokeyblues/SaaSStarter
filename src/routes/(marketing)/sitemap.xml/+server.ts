@@ -9,7 +9,7 @@ export const GET: RequestHandler = async () => {
     origin: WebsiteBaseUrl,
     excludeRoutePatterns: [
       ".*\\(admin\\).*", // i.e. exclude routes within admin group
-      "/projects/[projectId]", // Add this pattern
+      ".*\\(app\\).*", // Add this pattern
     ],
   })
 }
