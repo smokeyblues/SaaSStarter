@@ -118,7 +118,6 @@ export const actions: Actions = {
       .from("projects")
       .insert({
         name: name.trim(),
-        // owner_user_id: user.id, // Set the current user as the owner
         owner_team_id: teamId, // Set the validated team
       })
       .select("id") // Select the ID of the newly created project
