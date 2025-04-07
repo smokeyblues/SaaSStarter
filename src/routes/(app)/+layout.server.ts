@@ -2,6 +2,7 @@
 import { redirect } from "@sveltejs/kit"
 import type { LayoutServerLoad } from "./$types"
 import type { TeamMembershipWithTeamDetails } from "$lib/types" // Define this custom type below
+import { CreateProfileStep } from "../../config"
 
 // Optional: Define a more specific type combining membership and team details
 // You might put this in a shared types file (e.g., src/lib/types.ts)

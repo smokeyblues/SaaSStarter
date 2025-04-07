@@ -1,47 +1,42 @@
-// src/routes/(app)/dashboard/+page.server.ts
-
-import { redirect } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import type { PageServerLoad } from "./$types"
+import type { Project } from "$lib/types" // Assuming you have a Project type defined
 
 export const load: PageServerLoad = async ({
-  locals: { supabase, safeGetSession },
+  locals: { supabase },
+  parent,
 }) => {
-  // Get the validated session and user
-  const { session, user } = await safeGetSession()
+  // Get session and userTeams data from the parent layout load function
+  const { session, userTeams } = await parent()
 
-  // If no user is logged in, redirect to login
-  if (!session || !user) {
-    throw redirect(303, "/login") // Adjust redirect path if needed
+  // Although the layout should redirect, double-check for session
+  if (!session) {
+    // This should theoretically not happen due to layout redirect
+    throw error(401, "Unauthorized")
   }
 
-  // Check if the user is part of any teams
-  const { data: teamMemberships, error: teamError } = await supabase
-    .from("team_memberships") // This should now be type-safe after regenerating types
-    .select("team_id") // We only need to know if *any* record exists
-    .eq("user_id", user.id)
-    .limit(1) // We only need one record to confirm they are in a team
+  // Assumption: Use the first team found for the user as the active team for the dashboard.
+  // Adjust this logic if you have a specific way to determine the active team (e.g., from URL, user prefs).
+  const activeTeam = userTeams?.[0]?.teams
 
-  if (teamError) {
-    console.error("Error fetching team memberships:", teamError)
-    // Decide how to handle this error - maybe show an error message on the dashboard
-    // For now, we'll assume they have no teams if there's an error, but log it.
-    return {
-      hasTeams: false,
-      // You might want to pass profile data too if needed for the welcome message
-      profile: null, // Placeholder - fetch profile if needed
-    }
+  if (!activeTeam?.id) {
+    // Handle case where user might not be part of any team yet
+    console.warn("User is not associated with any team.")
+    return { projects: [] } // Return empty projects array
   }
 
-  const hasTeams = teamMemberships !== null && teamMemberships.length > 0
+  const { data: projects, error: projectsError } = await supabase
+    .from("projects") // Assuming your table is named 'projects'
+    .select("*") // Select all columns, or specify needed ones: 'id, name, description'
+    .eq("owner_team_id", activeTeam.id) // Assuming a 'team_id' column links projects to teams
 
-  // If they have teams, you might want to load the actual team details here later
-  // For now, just knowing *if* they have teams is enough for the dynamic dashboard
+  if (projectsError) {
+    console.error("Error fetching projects:", projectsError)
+    throw error(500, "Failed to load projects")
+  }
 
   return {
-    hasTeams: hasTeams,
-    // You might want to pass profile data too if needed for the welcome message
-    profile: null, // Placeholder - fetch profile if needed
-    // teams: [] // Placeholder - load actual teams if hasTeams is true
-    // projects: [] // Placeholder - load projects later
+    // Type assertion might be needed depending on your Project type and select query
+    projects: (projects as Project[]) ?? [],
   }
 }
