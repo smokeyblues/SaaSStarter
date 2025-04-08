@@ -1,6 +1,6 @@
 // src/routes/(app)/projects/[projectId]/+page.server.ts
-import { error, redirect } from "@sveltejs/kit"
-import type { PageServerLoad } from "./$types"
+import { error, redirect, fail } from "@sveltejs/kit"
+import type { PageServerLoad, Actions } from "./$types"
 
 export const load: PageServerLoad = async ({
   params,
@@ -89,5 +89,92 @@ export const load: PageServerLoad = async ({
   }
 }
 
-// Actions for editing/deleting the project itself would go here later
-// export const actions: Actions = { ... };
+export const actions: Actions = {
+  updateProjectName: async ({
+    request,
+    locals: { supabase, session },
+    params,
+  }) => {
+    const formData = await request.formData()
+    const newName = formData.get("projectName") as string
+    const { projectId } = params
+    const user = session?.user
+
+    // Return the name field consistently on validation errors for this action
+    const actionData = { action: "updateName", currentName: newName || null }
+
+    if (!user) {
+      return fail(401, {
+        ...actionData,
+        error: "Unauthorized",
+        currentName: undefined,
+      }) // Don't expose name on auth fail
+    }
+
+    if (
+      !newName ||
+      typeof newName !== "string" ||
+      newName.trim().length === 0
+    ) {
+      return fail(400, {
+        ...actionData, // Includes currentName
+        error: "Project name cannot be empty",
+      })
+    }
+
+    // Verify user has permission to update the project
+    // First get the project's team
+    const { data: projectData, error: projectError } = await supabase
+      .from("projects")
+      .select("owner_team_id")
+      .eq("id", projectId)
+      .single()
+
+    if (projectError || !projectData) {
+      console.error("Error fetching project for update check:", projectError)
+      return fail(404, {
+        action: "updateName",
+        error: "Project not found",
+        currentName: undefined,
+      })
+    }
+
+    // Check if user is a member of the team
+    const { error: membershipError } = await supabase
+      .from("team_memberships")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("team_id", projectData.owner_team_id)
+      .single()
+
+    if (membershipError) {
+      return fail(403, {
+        action: "updateName",
+        error: "You do not have permission to update this project",
+        currentName: undefined,
+      })
+    }
+
+    // Update the project name
+    const { error: updateError } = await supabase
+      .from("projects")
+      .update({ name: newName.trim() })
+      .eq("id", projectId)
+
+    if (updateError) {
+      console.error("Error updating project name:", updateError)
+      return fail(500, {
+        action: "updateName",
+        error: "Failed to update project name",
+        currentName: newName, // Keep name on server error for retry
+      })
+    }
+
+    // Success case does not need currentName
+    return {
+      action: "updateName",
+      success: true,
+      message: "Project name updated successfully.",
+    }
+  },
+}

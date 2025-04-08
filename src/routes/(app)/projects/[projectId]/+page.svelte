@@ -1,12 +1,21 @@
 <!-- src/routes/(app)/projects/[projectId]/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from "./$types" // Will get types from load function later
+  import { enhance } from "$app/forms"
+  import type { ActionData, PageData } from "./$types" // Will get types from load function later
   import { page } from "$app/stores" // To access route params easily if needed, though data prop is better
 
-  export let data: PageData
+  let { data, form }: { data: PageData; form: ActionData } = $props()
 
-  // Assume data contains: { project: { id: string, name: string }, team: { id: string, name: string } }
-  // This structure needs to be provided by the load function in +page.server.ts
+  // State for editing project name
+  let editingName = $state(false)
+  let projectNameInput = $state(data.project?.name ?? "")
+
+  $effect(() => {
+    // Update input only if not editing
+    if (!editingName) {
+      projectNameInput = data.project?.name ?? ""
+    }
+  })
 
   // Define the bible sections for iteration
   const bibleSections = [
@@ -37,10 +46,6 @@
     },
   ]
 
-  // Placeholder functions for actions (will be replaced by forms/modals later)
-  function editProjectName() {
-    alert("Placeholder: Edit Project Name action")
-  }
   function deleteProject() {
     if (
       confirm(
@@ -69,9 +74,32 @@
           <li>{data.project?.name || "Project"}</li>
         </ul>
       </div>
-      <h1 class="text-3xl md:text-4xl font-bold">
-        {data.project?.name || "Loading Project..."}
-      </h1>
+      {#if !editingName}
+        <h1 class="text-3xl md:text-4xl font-bold">
+          {data.project?.name || "Loading Project..."}
+        </h1>
+      {:else}
+        <form method="POST" action="?/updateProjectName" class="flex-grow mr-4">
+          <input
+            type="text"
+            name="projectName"
+            bind:value={projectNameInput}
+            class="input input-bordered w-full max-w-xs"
+            required
+          />
+          <button type="submit" class="btn btn-primary ml-2">Save</button>
+          <button
+            type="button"
+            onclick={() => (editingName = false)}
+            class="btn btn-ghost ml-1">Cancel</button
+          >
+          {#if form?.action === "updateName" && form?.error && "currentName" in form && form.currentName !== undefined}
+            <p class="text-error text-sm mt-1">
+              {form.error} (You entered: {form.currentName})
+            </p>
+          {/if}
+        </form>
+      {/if}
     </div>
 
     <!-- Project Actions Dropdown -->
@@ -98,9 +126,9 @@
         tabindex="0"
         class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
       >
-        <li><button on:click={editProjectName}>Edit Name</button></li>
+        <li><button onclick={() => (editingName = true)}>Edit Name</button></li>
         <li>
-          <button on:click={deleteProject} class="text-error"
+          <button onclick={deleteProject} class="text-error"
             >Delete Project</button
           >
         </li>
@@ -108,6 +136,11 @@
       </ul>
     </div>
   </div>
+
+  <!-- Show general errors for this action if currentName is NOT set -->
+  {#if form?.action === "updateName" && form?.error && (!("currentName" in form) || form.currentName === undefined)}
+    <p class="text-error text-sm">{form.error}</p>
+  {/if}
 
   <!-- Bible Sections Overview -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
