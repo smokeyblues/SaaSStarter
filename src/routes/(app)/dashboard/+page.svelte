@@ -72,9 +72,6 @@
 
     <section>
       <h2 class="text-2xl mb-2">Your Projects</h2>
-      <!-- NOTE: 'projects' data is NOT loaded yet by layout -->
-      <!-- You will need to load projects specifically for the dashboard later -->
-      <!-- Replace the check below with one for dashboard-specific project data -->
       {#if hasProjects}
         <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
           {#each projects as project (project.id)}
