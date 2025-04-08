@@ -236,7 +236,14 @@
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-2xl font-semibold">Projects</h2>
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-semibold">Projects</h2>
+        <!-- Add Create Project Button -->
+        <a
+          href="/projects/create?teamId={team.id}"
+          class="btn btn-sm btn-secondary">Create New Project</a
+        >
+      </div>
       <ProjectList {projects}>
         {#snippet emptyContent()}
           <!-- Changed slot="empty" to #snippet emptyContent() -->
@@ -248,3 +255,7 @@
     <p>Loading team details...</p>
   {/if}
 </div>
+
+<style>
+  /* Optional: Add any custom styles if needed */
+</style>
