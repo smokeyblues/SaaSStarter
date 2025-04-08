@@ -177,4 +177,68 @@ export const actions: Actions = {
       message: "Project name updated successfully.",
     }
   },
+
+  deleteProject: async ({ locals: { supabase, session }, params }) => {
+    const { projectId } = params
+    const user = session?.user
+    const actionData = { action: "deleteProject" }
+
+    if (!user) {
+      return fail(401, { ...actionData, error: "Unauthorized" })
+    }
+
+    // 1. Get the project's owning team ID
+    const { data: projectData, error: projectFetchError } = await supabase
+      .from("projects")
+      .select("owner_team_id")
+      .eq("id", projectId)
+      .single()
+
+    if (projectFetchError || !projectData) {
+      console.error(
+        "Error fetching project for delete check:",
+        projectFetchError,
+      )
+      return fail(404, { ...actionData, error: "Project not found." })
+    }
+
+    const teamId = projectData.owner_team_id
+
+    // 2. Verify user is the OWNER of the team that owns the project
+    const { data: teamData, error: teamFetchError } = await supabase
+      .from("teams")
+      .select("owner_user_id")
+      .eq("id", teamId)
+      .single()
+
+    if (teamFetchError || !teamData) {
+      console.error("Error fetching team for delete check:", teamFetchError)
+      return fail(500, {
+        ...actionData,
+        error: "Could not verify team ownership for project deletion.",
+      })
+    }
+
+    if (teamData.owner_user_id !== user.id) {
+      return fail(403, {
+        ...actionData,
+        error: "Only the team owner can delete this project.",
+      })
+    }
+
+    // 3. Delete the project
+    const { error: deleteError } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", projectId)
+
+    if (deleteError) {
+      console.error("Error deleting project:", deleteError)
+      // Handle potential foreign key constraints if needed
+      return fail(500, { ...actionData, error: "Failed to delete project." })
+    }
+
+    // 4. Redirect to the team page after successful deletion
+    redirect(303, `/teams/${teamId}`)
+  },
 }

@@ -46,14 +46,14 @@
     },
   ]
 
-  function deleteProject() {
+  function confirmDelete(event: SubmitEvent) {
+    const projectName = data.project?.name || "this project"
     if (
-      confirm(
-        `Are you sure you want to delete project "${data.project?.name || "this project"}"? This cannot be undone.`,
+      !window.confirm(
+        `Are you sure you want to permanently delete project "${projectName}"? This action cannot be undone.`,
       )
     ) {
-      alert("Placeholder: Delete Project action")
-      // TODO: Implement form submission or API call for deletion
+      event.preventDefault() // Stop form submission
     }
   }
 </script>
@@ -128,16 +128,24 @@
       >
         <li><button onclick={() => (editingName = true)}>Edit Name</button></li>
         <li>
-          <button onclick={deleteProject} class="text-error"
-            >Delete Project</button
-          >
+          <!-- Delete Project Form -->
+          <form method="POST" action="?/deleteProject" onsubmit={confirmDelete}>
+            <button type="submit" class="w-full text-left text-error"
+              >Delete Project</button
+            >
+          </form>
         </li>
         <!-- Add other actions like 'Manage Access' later -->
       </ul>
     </div>
   </div>
 
-  <!-- Show general errors for this action if currentName is NOT set -->
+  <!-- General Delete Project Error -->
+  {#if form?.action === "deleteProject" && form?.error}
+    <p class="text-error text-sm">{form.error}</p>
+  {/if}
+
+  <!-- Show general errors for updateName action if currentName is NOT set -->
   {#if form?.action === "updateName" && form?.error && (!("currentName" in form) || form.currentName === undefined)}
     <p class="text-error text-sm">{form.error}</p>
   {/if}
