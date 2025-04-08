@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms"
   import type { ActionData, PageData } from "./$types"
+  import ProjectList from "$lib/components/ProjectList.svelte" // Import the new component
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
   const { team, members, projects, isOwner } = data
@@ -236,53 +237,12 @@
 
     <section class="space-y-4">
       <h2 class="text-2xl font-semibold">Projects</h2>
-      {#if projects.length > 0}
-        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-          {#each projects as project (project.id)}
-            <li class="flex justify-between gap-x-6 py-5">
-              <div class="flex min-w-0 gap-x-4">
-                <!-- Potential project icon/image placeholder -->
-                <!-- <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src={project.imageUrl} alt=""> -->
-                <div class="min-w-0 flex-auto">
-                  <p
-                    class="text-sm font-semibold leading-6 text-gray-900 dark:text-white"
-                  >
-                    <!-- Link to the specific project page -->
-                    <a href={`/projects/${project.id}`} class="hover:underline">
-                      {project.name || "Unnamed Project"}
-                    </a>
-                  </p>
-                  <p
-                    class="mt-1 truncate text-xs leading-5 text-gray-500 dark:text-gray-400"
-                  >
-                    <!-- {project.description || "No description"} -->
-                  </p>
-                </div>
-              </div>
-              <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                <!-- Add relevant actions or info here, e.g., last updated -->
-                <p class="text-sm leading-6 text-gray-900 dark:text-white">
-                  <!-- Example: Status or role -->
-                </p>
-                <p
-                  class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400"
-                >
-                  <!-- Example: Last updated time -->
-                  <!-- Last updated <time datetime={project.lastUpdatedDateTime}>{project.lastUpdated}</time> -->
-                </p>
-                <!-- Or maybe a direct 'View' link -->
-                <a
-                  href={`/projects/${project.id}`}
-                  class="text-sm leading-6 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-                  >View<span class="sr-only">, {project.name}</span></a
-                >
-              </div>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <p>This team hasn't been assigned any projects yet.</p>
-      {/if}
+      <ProjectList {projects}>
+        {#snippet emptyContent()}
+          <!-- Changed slot="empty" to #snippet emptyContent() -->
+          <p>This team hasn't been assigned any projects yet.</p>
+        {/snippet}
+      </ProjectList>
     </section>
   {:else}
     <p>Loading team details...</p>
