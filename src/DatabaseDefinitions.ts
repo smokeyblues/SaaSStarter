@@ -46,6 +46,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           company_name: string | null
+          email: string | null
           full_name: string | null
           id: string
           unsubscribed: boolean
@@ -55,6 +56,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           company_name?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
           unsubscribed?: boolean
@@ -64,6 +66,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           company_name?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
           unsubscribed?: boolean
@@ -121,6 +124,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      team_invitations: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          invited_by_user_id: string
+          invited_user_email: string
+          role: Database["public"]["Enums"]["team_role"]
+          status: string
+          team_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invited_by_user_id: string
+          invited_user_email: string
+          role?: Database["public"]["Enums"]["team_role"]
+          status?: string
+          team_id: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invited_by_user_id?: string
+          invited_user_email?: string
+          role?: Database["public"]["Enums"]["team_role"]
+          status?: string
+          team_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_invitations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_memberships: {
         Row: {
@@ -183,7 +230,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      team_role: "owner" | "admin" | "member"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -298,6 +345,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      team_role: ["owner", "admin", "member"],
+    },
   },
 } as const

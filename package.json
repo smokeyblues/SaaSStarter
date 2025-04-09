@@ -53,7 +53,7 @@
     "posthog-js": "^1.234.7",
     "resend": "^3.5.0",
     "stripe": "^13.3.0",
-    "svelte-kit-sst": "2.43.5"
+    "zod": "^3.24.2"
   },
   "overrides": {
     "@supabase/auth-ui-svelte": {
