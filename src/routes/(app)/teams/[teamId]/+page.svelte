@@ -37,26 +37,26 @@
   let inviteRole = $state("member") // Default role for new invites
 
   $effect(() => {
-    // Simpler effect: Update input only if not editing
     if (!editingName) {
-      teamNameInput = team?.name ?? "" // Add null check for team
+      teamNameInput = team?.name ?? ""
     }
-    // Reset role input if editing stops
     if (!editingRoleId) {
       newRoleInput = "member" // Reset to default
     }
   })
 
-  // Effect to handle form submission results for inviteMember
   $effect(() => {
     if (form?.action === "inviteMember" && form?.success) {
       showInviteModal = false // Close modal on success
       inviteEmail = "" // Reset form
       inviteRole = "member"
-      // No need for invalidateAll here if enhance handles it, but explicit is okay too
-      // invalidateAll() // Refresh data, including pending invites
     }
-    // Keep modal open on error to show the message
+  })
+
+  $effect(() => {
+    if (form?.action === "updateName" && form?.success) {
+      editingName = false
+    }
   })
 
   function confirmDelete(event: SubmitEvent) {
@@ -69,7 +69,6 @@
     }
   }
 
-  // New function for remove confirmation
   function confirmRemoveMember(event: SubmitEvent) {
     const form = event.target as HTMLFormElement
     const memberName = form.dataset.memberName || "this member" // Get name from data attribute
@@ -90,12 +89,9 @@
   function cancelEditingRole() {
     editingRoleId = null
   }
-
-  // Removed confirmRevokeInvite function, logic moved to use:enhance
 </script>
 
 <div class="container mx-auto max-w-4xl p-4 space-y-8">
-  <!-- TODO: move breadcrumbs to (app)/+layout.svelte -->
   <div class="text-sm breadcrumbs mb-1">
     <ul>
       <li><a href="/dashboard">Dashboard</a></li>
@@ -108,7 +104,7 @@
     <section class="space-y-4">
       <div class="flex justify-between items-center">
         {#if !editingName}
-          <h1 class="text-3xl font-bold">Team: {team.name}</h1>
+          <h1 class="text-3xl font-bold">Team: {data.team.name}</h1>
         {:else}
           <form
             method="POST"

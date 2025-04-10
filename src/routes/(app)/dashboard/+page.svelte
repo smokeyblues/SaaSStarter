@@ -1,20 +1,49 @@
 <!-- src/routes/(app)/dashboard/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from "./$types"
+  import type { PageData, ActionData } from "./$types"
+  import { enhance } from "$app/forms"
+  import { invalidateAll } from "$app/navigation" // Needed to refresh invites list
   // import type { DashboardProject } from "$lib/types"
 
-  export let data: PageData
+  let { data, form }: { data: PageData; form: ActionData } = $props()
 
-  // Correctly derive hasTeams from the 'userTeams' property returned by the layout load
-  $: hasTeams = data.userTeams && data.userTeams.length > 0
-  $: projects = data.projects
+  // Correctly derive hasTeams using $derived
+  let hasTeams = $derived(data.userTeams && data.userTeams.length > 0)
+  // Derive projects using $derived
+  let projects = $derived(data.projects)
+
   // $: console.log("userTeams", data.userTeams)
   // $: console.log("Complete data prop in +page.svelte:", data)
 
   // Placeholder for projects data - needs to be loaded separately
-  // $: hasProjects = data.dashboardProjects && data.dashboardProjects.length > 0
-  $: hasProjects = projects && projects.length > 0
+  // let hasProjects = $derived(data.dashboardProjects && data.dashboardProjects.length > 0)
+  let hasProjects = $derived(projects && projects.length > 0)
   // console.log("hasProjects", hasProjects)
+
+  // Reactive statement to filter invites shown based on form actions
+  let pendingInvitations = $derived(
+    data.pendingInvitations.filter((invite) => {
+      // Hide invite if it was just successfully accepted or declined by this user
+      if (form?.success && "token" in form && form.token === invite.token) {
+        return false // Hide it
+      }
+      return true // Keep it
+    }),
+  )
+
+  // Optional: Effect for showing toast messages on success/error
+  $effect(() => {
+    if (form?.action === "acceptInvite" || form?.action === "declineInvite") {
+      if (form?.success) {
+        // Show success toast: form.message
+        console.log("Invite action success:", form.message)
+        invalidateAll() // Ensure data is fresh after action
+      } else if (form?.error) {
+        // Show error toast: form.error
+        console.error("Invite action error:", form.error)
+      }
+    }
+  })
 </script>
 
 {#if !hasTeams}
@@ -39,11 +68,69 @@
   </div>
 {:else}
   <!-- POPULATED STATE: User has teams -->
-  <div class="mx-auto max-w-4xl">
-    <h1 class="text-3xl font-bold mb-4">Your Dashboard</h1>
+  <div class="container mx-auto max-w-4xl p-4 space-y-8">
+    <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
 
-    <section class="mb-8">
-      <h2 class="text-2xl mb-2">Your Teams</h2>
+    <!-- *** Team Invitations Section - REVERTED DISPLAY *** -->
+    {#if pendingInvitations && pendingInvitations.length > 0}
+      <section class="space-y-4 p-4 border rounded-lg shadow-sm">
+        <h2 class="text-xl font-semibold">Team Invitations</h2>
+        <ul class="space-y-3">
+          {#each pendingInvitations as invite (invite.id)}
+            <li
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-base-100 rounded-md"
+            >
+              <div>
+                <!-- Removed reference to invite.teams.name -->
+                You have been invited to join a team as a
+                <span class="font-medium">{invite.role}</span>.
+                <span class="text-xs text-gray-500 block"
+                  >Invited: {new Date(
+                    invite.created_at,
+                  ).toLocaleDateString()}</span
+                >
+              </div>
+              <div class="flex space-x-2 mt-2 sm:mt-0">
+                <!-- Accept Form -->
+                <form
+                  method="POST"
+                  action="?/acceptInvite"
+                  use:enhance
+                  class="inline-block"
+                >
+                  <input type="hidden" name="token" value={invite.token} />
+                  <button type="submit" class="btn btn-sm btn-success"
+                    >Accept</button
+                  >
+                </form>
+                <!-- Decline Form -->
+                <form
+                  method="POST"
+                  action="?/declineInvite"
+                  use:enhance
+                  class="inline-block"
+                >
+                  <input type="hidden" name="token" value={invite.token} />
+                  <button type="submit" class="btn btn-sm btn-error btn-outline"
+                    >Decline</button
+                  >
+                </form>
+              </div>
+            </li>
+            <!-- Display errors specific to this invite token -->
+            {#if form?.error && "token" in form && form.token === invite.token}
+              <li class="pl-4 -mt-2">
+                <p class="text-error text-sm">{form.error}</p>
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      </section>
+    {/if}
+    <!-- *** END: Team Invitations Section *** -->
+
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Your Teams</h2>
       <!-- Correctly loop over 'userTeams' -->
       {#each data.userTeams as teamMembership}
         {#if teamMembership.teams}
@@ -67,11 +154,11 @@
       {:else}
         <p>Something went wrong loading your teams.</p>
       {/each}
-      <a href="/teams/create" class="btn btn-outline mt-4">Create New Team</a>
+      <a href="/teams/create" class="btn btn-primary">Create New Team</a>
     </section>
 
-    <section>
-      <h2 class="text-2xl mb-2">Your Projects</h2>
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Your Projects</h2>
       {#if hasProjects}
         <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
           {#each projects as project (project.id)}

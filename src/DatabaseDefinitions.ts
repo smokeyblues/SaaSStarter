@@ -227,7 +227,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_team_invitation: {
+        Args: { invite_token: string }
+        Returns: Json
+      }
+      get_project_details_for_member: {
+        Args: { input_project_id: string }
+        Returns: {
+          project_id: string
+          project_name: string
+          team_id: string
+          team_name: string
+        }[]
+      }
+      get_team_details_for_member: {
+        Args: { input_team_id: string }
+        Returns: {
+          id: string
+          name: string
+          owner_user_id: string
+        }[]
+      }
+      get_user_teams_with_details: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          role: string
+          team_id: string
+          team_name: string
+          team_owner_user_id: string
+        }[]
+      }
     }
     Enums: {
       team_role: "owner" | "admin" | "member"

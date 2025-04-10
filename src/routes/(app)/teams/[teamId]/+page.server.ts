@@ -45,20 +45,31 @@ export const load = (async ({
     error(401, "Unauthorized")
   }
 
-  // 1. Fetch team details
-  const { data: team, error: teamError } = await supabase
-    .from("teams")
-    .select(`id, name, owner_user_id`)
-    .eq("id", teamId)
-    .single()
+  // 1. Fetch team details using the RPC function
+  const { data: teamDataResult, error: rpcError } = await supabase
+    .rpc("get_team_details_for_member", { input_team_id: teamId })
+    // Use .maybeSingle() as the function might return 0 rows if user lacks access
+    .maybeSingle()
 
-  if (teamError) {
-    console.error("Error fetching team:", teamError)
-    error(500, `Failed to load team details: ${teamError.message}`)
+  // Handle RPC errors
+  if (rpcError) {
+    // Check for specific auth errors raised by the function if needed
+    if (rpcError.message.includes("User must be authenticated")) {
+      error(401, "Unauthorized")
+    }
+    console.error("Error calling get_team_details_for_member RPC:", rpcError)
+    error(500, `Failed to load team details via RPC: ${rpcError.message}`)
   }
-  if (!team) {
-    error(404, "Team not found")
+
+  // Handle case where function returned empty set (user not member/owner)
+  if (!teamDataResult) {
+    error(403, "Forbidden: You do not have permission to view this team.")
+    // Or 404 if you prefer "Team not found" for non-members
+    // error(404, "Team not found or you lack permissions.");
   }
+
+  // Assign the successfully fetched team data
+  const team = teamDataResult // Rename for clarity downstream
 
   // Check if the current user is the owner (needed for load AND actions)
   const isOwner = team.owner_user_id === userId

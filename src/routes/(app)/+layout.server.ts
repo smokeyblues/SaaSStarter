@@ -51,29 +51,36 @@ export const load: LayoutServerLoad = async ({
     redirect(303, createProfilePath)
   }
 
-  // Fetch the teams the user is a member of, including team details
-  // Use generated types for safety
-  const { data: userTeams, error: teamsError } = await supabase
-    .from("team_memberships")
-    .select(
-      `
-            role,
-            teams ( id, name, owner_user_id )
-        `,
-    ) // Select role from team_memberships and related team details
-    .eq("user_id", user.id)
+  // Fetch the teams the user is a member of using the RPC function
+  const { data: userTeamsData, error: rpcError } = await supabase.rpc(
+    "get_user_teams_with_details",
+  ) // Call the function
 
-  if (teamsError) {
-    console.error("Error fetching user's teams:", teamsError)
-    // Handle error appropriately - maybe return an empty array or show error state
+  if (rpcError) {
+    console.error("Error fetching user's teams via RPC:", rpcError)
+    // Handle error appropriately
   }
+
+  // Structure the data to match the expected 'TeamMembershipWithTeamDetails' type
+  // The function returns rows like { role, team_id, team_name, team_owner_user_id }
+  const userTeams =
+    userTeamsData?.map((row) => ({
+      role: row.role,
+      teams: {
+        // Nest the team details
+        id: row.team_id,
+        name: row.team_name,
+        owner_user_id: row.team_owner_user_id,
+      },
+    })) ?? []
 
   return {
     session,
     profile,
     user,
     amr: aal?.currentAuthenticationMethods,
-    userTeams: (userTeams ?? []) as TeamMembershipWithTeamDetails[], // Pass the user's teams (or empty array)
+    // Ensure the final structure matches 'TeamMembershipWithTeamDetails[]'
+    userTeams: userTeams as TeamMembershipWithTeamDetails[],
   }
 }
 
