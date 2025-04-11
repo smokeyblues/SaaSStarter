@@ -10,5 +10,26 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "svelte"],
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  // --- Deno Configuration ---
+  // Enable the Deno extension for this workspace
+  "deno.enable": true,
+  // Enable linting using 'deno lint'
+  "deno.lint": true,
+  // Enable unstable Deno APIs if needed (often useful for Supabase functions)
+  "deno.unstable": true,
+  // **Crucially**: Tell VS Code to only apply Deno logic to the functions path
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+
+  // --- Optional: Exclude functions from default TS checks ---
+  // This prevents the default Node-based TS server from complaining
+  // about Deno types in the functions folder.
+  "typescript.tsdk": "node_modules/typescript/lib", // Keep default TS for rest of project
+  "files.exclude": {
+    // You might already have excludes here
+  },
+  // Consider adding if you still see conflicting errors after restart:
+  // "typescript.validate.enable": false, // Less ideal, disables some built-in checks globally
 }

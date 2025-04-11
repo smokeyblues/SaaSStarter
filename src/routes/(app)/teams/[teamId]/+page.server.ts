@@ -571,10 +571,9 @@ export const actions: Actions = {
     const validatedRole = roleToAssign as AssignableRole
 
     // 5. Authorization: Verify caller is the team owner
-    //    (RLS also enforces this, but good practice)
     const { data: teamData, error: teamFetchError } = await supabase
       .from("teams")
-      .select("owner_user_id, name") // Fetch name for email content later
+      .select("owner_user_id, name") // Fetch name for email content
       .eq("id", teamId)
       .single()
 
@@ -698,16 +697,45 @@ export const actions: Actions = {
       })
     }
 
-    // 10. --- TODO: Invoke Supabase Edge Function to send email ---
-    // We will need: validatedEmail, invitationToken, teamData.name, inviter's name (optional)
-    console.log(
-      `TODO: Send email to ${validatedEmail} with token ${invitationToken} for team ${teamData.name}`,
-    )
-    // Placeholder for actual function call
-    // const { error: functionError } = await supabase.functions.invoke('send-invite-email', { ... })
-    // if (functionError) { ... handle email failure ... }
+    // 10. Invoke Supabase Edge Function to send email
+    // Try to get the inviter's name from user metadata
+    const inviterName = user.user_metadata?.full_name ?? "Someone from the team"
 
-    // 11. Return Success
+    // Call the edge function - Do NOT await if you want the action to return faster,
+    // but handle potential background errors appropriately (logging, monitoring).
+    // Awaiting is simpler for now.
+    const { error: functionError } = await supabase.functions.invoke(
+      "send-invite-email",
+      {
+        body: {
+          to: validatedEmail,
+          token: invitationToken,
+          teamName: teamData.name,
+          inviterName: inviterName,
+        },
+      },
+    )
+
+    // Handle email sending failure (log it, but maybe don't fail the whole action)
+    if (functionError) {
+      console.error(
+        "Error invoking send-invite-email function:",
+        functionError.message,
+      )
+      // Decide on action failure strategy:
+      // Option 1: Fail the action entirely
+      // return fail(500, { ...baseActionData, success: false, error: `Invitation created, but failed to send email: ${functionError.message}` });
+      // Option 2: Return success but include a warning/note (better UX usually)
+      return {
+        ...baseActionData,
+        success: true, // Invite WAS created
+        message: `Invitation created for ${validatedEmail}, but there was an issue sending the email notification. Please contact them directly or try revoking and re-inviting.`,
+        warning: "Email sending failed.", // Add a flag for the frontend if needed
+        email: undefined, // Clear email field on success
+      }
+    }
+
+    // 11. Return Success (if email sent successfully)
     return {
       ...baseActionData,
       success: true,

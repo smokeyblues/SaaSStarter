@@ -228,8 +228,12 @@ export type Database = {
     }
     Functions: {
       accept_team_invitation: {
-        Args: { invite_token: string }
-        Returns: Json
+        Args: { invitation_token: string; accepting_user_id: string }
+        Returns: {
+          success: boolean
+          message: string
+          team_id: string
+        }[]
       }
       get_project_details_for_member: {
         Args: { input_project_id: string }
