@@ -7,7 +7,6 @@ import type {
   TablesInsert,
 } from "../../../../DatabaseDefinitions" // Adjusted path, added TablesInsert
 import { z } from "zod" // For stricter validation
-import { randomUUID } from "crypto" // For generating tokens
 
 // Define a type for the combined member+profile structure
 type TeamMemberWithProfile = Tables<"team_memberships"> & {
@@ -664,18 +663,16 @@ export const actions: Actions = {
       })
     }
 
-    // 8. Generate Unique Token
-    const invitationToken = randomUUID()
+    // 8. Generate Unique Token using Web Crypto API
+    const invitationToken = crypto.randomUUID()
 
-    // 9. Database Insert - Use TablesInsert for type safety
+    // 9. Database Insert
     const inviteData: TablesInsert<"team_invitations"> = {
       team_id: teamId,
       invited_by_user_id: user.id,
       invited_user_email: validatedEmail,
       role: validatedRole,
       token: invitationToken,
-      // status defaults to 'pending' in DB
-      // expires_at defaults in DB
     }
 
     const { error: insertError } = await supabase
