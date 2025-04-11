@@ -1,17 +1,27 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
-import type { Tables } from "../../DatabaseDefinitions"
-import type { LayoutData as AppLayoutData } from "../(app)/$types"
+import type { Tables } from "../../../DatabaseDefinitions"
+
+type AcceptInvitePageData = {
+  isValidToken: boolean
+  message: string | null
+  teamName: string | null
+  invitedEmail: string | null
+  isLoggedInUserMatch: boolean
+  accountExistsForEmail: boolean | null
+  token: string | null
+  session: import("@supabase/supabase-js").Session | null
+}
 
 export const load = async ({
   url,
   locals: { supabase, safeGetSession, supabaseServiceRole },
-  parent,
-}) => {
-  const layoutData = (await parent()) as AppLayoutData
+}): Promise<AcceptInvitePageData> => {
+  const { session } = await safeGetSession()
+  console.log("Locally fetched session in /accept-invite:", session)
 
   const token = url.searchParams.get("token")
-  const loggedInUserEmail = layoutData.session?.user?.email ?? null
+  const loggedInUserEmail = session?.user?.email ?? null
   const defaultErrorMessage = "Invalid or expired invitation link."
 
   const pageSpecificData = {
@@ -25,48 +35,54 @@ export const load = async ({
   }
 
   if (!token) {
-    return { ...layoutData, ...pageSpecificData }
+    return { ...pageSpecificData, session }
   }
 
-  const { data: invite, error: inviteError } = await supabase
-    .from("team_invitations")
-    .select(`team_id, invited_user_email, role, status, teams ( name )`)
-    .eq("token", token)
-    .maybeSingle()
+  const { data: inviteDetailsArray, error: rpcError } = await supabase.rpc(
+    "get_invitation_details_by_token",
+    { p_token: token },
+  )
 
-  if (inviteError) {
-    console.error("Error fetching invitation:", inviteError)
+  const invite = inviteDetailsArray?.[0]
+
+  console.log("RPC get_invitation_details_by_token result:", invite)
+
+  if (rpcError) {
+    console.error(
+      "Error calling get_invitation_details_by_token RPC:",
+      rpcError,
+    )
     pageSpecificData.message =
       "An error occurred while validating the invitation."
-    return { ...layoutData, ...pageSpecificData }
+    return { ...pageSpecificData, session }
   }
 
-  if (!invite || !invite.teams) {
+  if (!invite) {
     pageSpecificData.message = defaultErrorMessage
-    return { ...layoutData, ...pageSpecificData }
+    return { ...pageSpecificData, session }
   }
 
-  if (invite.status !== "pending") {
-    if (invite.status === "accepted") {
+  if (invite.invite_status !== "pending") {
+    if (invite.invite_status === "accepted") {
       pageSpecificData.message = "This invitation has already been accepted."
-    } else if (invite.status === "revoked") {
+    } else if (invite.invite_status === "revoked") {
       pageSpecificData.message = "This invitation has been revoked."
-    } else if (invite.status === "expired") {
+    } else if (invite.invite_status === "expired") {
       pageSpecificData.message = "This invitation has expired."
     } else {
       pageSpecificData.message = defaultErrorMessage
     }
-    return { ...layoutData, ...pageSpecificData }
+    return { ...pageSpecificData, session }
   }
 
   pageSpecificData.isValidToken = true
   pageSpecificData.message = null
-  pageSpecificData.teamName = invite.teams.name
+  pageSpecificData.teamName = invite.team_name
   pageSpecificData.invitedEmail = invite.invited_user_email
   pageSpecificData.isLoggedInUserMatch =
     loggedInUserEmail === invite.invited_user_email
 
-  if (!layoutData.session && pageSpecificData.invitedEmail) {
+  if (!session && pageSpecificData.invitedEmail) {
     try {
       const adminAuthClient = supabaseServiceRole.auth.admin
 
@@ -89,13 +105,13 @@ export const load = async ({
       pageSpecificData.message =
         "Could not verify account status. Please try logging in or signing up."
       pageSpecificData.isValidToken = false
-      return { ...layoutData, ...pageSpecificData }
+      return { ...pageSpecificData, session }
     }
   }
 
   return {
-    ...layoutData,
     ...pageSpecificData,
+    session,
   }
 }
 

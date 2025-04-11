@@ -73,23 +73,27 @@ export const load = (async ({
   // Check if the current user is the owner (needed for load AND actions)
   const isOwner = team.owner_user_id === userId
 
-  // 2. Fetch basic team memberships
-  const { data: memberships, error: membersError } = await supabase
+  // 2. Fetch basic team memberships USING SERVICE ROLE
+  //    This bypasses RLS for SELECTING memberships, ensuring all members are listed.
+  //    Page access control is handled by the initial RPC check.
+  const { data: memberships, error: membersError } = await supabaseServiceRole
     .from("team_memberships")
     .select(`role, user_id, team_id, created_at`)
     .eq("team_id", teamId)
 
   if (membersError) {
-    console.error("Error fetching team members:", membersError)
-    // Proceed, members might be empty or partially loaded if needed
+    console.error(
+      "Error fetching team members (using Service Role):",
+      membersError,
+    )
+    // Decide how to handle - fail, or proceed with potentially empty members
+    error(500, "Failed to load team members")
   }
 
   // 3. Fetch profiles and combine
   let membersWithProfiles: TeamMemberWithProfile[] = []
   if (memberships && memberships.length > 0) {
     const memberUserIds = memberships.map((m) => m.user_id)
-    // Use service role client here as regular users might not have permission
-    // to view all profiles unless specific RLS is set up.
     const { data: profilesData, error: profilesError } =
       await supabaseServiceRole
         .from("profiles")
@@ -101,7 +105,6 @@ export const load = (async ({
         "Error fetching member profiles (using Service Role):",
         profilesError,
       )
-      // Fallback: Map memberships without profile data
       membersWithProfiles = memberships.map((m) => ({ ...m, profiles: null }))
     } else {
       const profilesMap = new Map(
@@ -155,8 +158,8 @@ export const load = (async ({
     team,
     members: membersWithProfiles,
     projects: projects ?? [],
-    isOwner: isOwner, // Pass the calculated owner status
-    pendingInvites: pendingInvitations, // Pass invitations to the page (now typed correctly)
+    isOwner: isOwner,
+    pendingInvites: pendingInvitations,
   }
 }) satisfies PageServerLoad
 

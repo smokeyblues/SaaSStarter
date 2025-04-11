@@ -241,6 +241,17 @@ export type Database = {
           team_id: string
         }[]
       }
+      get_invitation_details_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          invite_id: string
+          team_id: string
+          invited_user_email: string
+          invite_role: Database["public"]["Enums"]["team_role"]
+          invite_status: string
+          team_name: string
+        }[]
+      }
       get_project_details_for_member: {
         Args: { input_project_id: string }
         Returns: {
