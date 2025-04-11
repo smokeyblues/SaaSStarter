@@ -1,15 +1,17 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 import type { Tables } from "../../DatabaseDefinitions"
+import type { LayoutData as AppLayoutData } from "../(app)/$types"
 
-export const load: PageServerLoad = async ({
+export const load = async ({
   url,
   locals: { supabase, safeGetSession, supabaseServiceRole },
   parent,
 }) => {
+  const layoutData = (await parent()) as AppLayoutData
+
   const token = url.searchParams.get("token")
-  const { session } = await safeGetSession()
-  const loggedInUserEmail = session?.user?.email ?? null
+  const loggedInUserEmail = layoutData.session?.user?.email ?? null
   const defaultErrorMessage = "Invalid or expired invitation link."
 
   const pageSpecificData = {
@@ -23,11 +25,7 @@ export const load: PageServerLoad = async ({
   }
 
   if (!token) {
-    const layoutData = await parent()
-    return {
-      ...layoutData,
-      ...pageSpecificData,
-    }
+    return { ...layoutData, ...pageSpecificData }
   }
 
   const { data: invite, error: inviteError } = await supabase
@@ -40,20 +38,12 @@ export const load: PageServerLoad = async ({
     console.error("Error fetching invitation:", inviteError)
     pageSpecificData.message =
       "An error occurred while validating the invitation."
-    const layoutData = await parent()
-    return {
-      ...layoutData,
-      ...pageSpecificData,
-    }
+    return { ...layoutData, ...pageSpecificData }
   }
 
   if (!invite || !invite.teams) {
     pageSpecificData.message = defaultErrorMessage
-    const layoutData = await parent()
-    return {
-      ...layoutData,
-      ...pageSpecificData,
-    }
+    return { ...layoutData, ...pageSpecificData }
   }
 
   if (invite.status !== "pending") {
@@ -66,11 +56,7 @@ export const load: PageServerLoad = async ({
     } else {
       pageSpecificData.message = defaultErrorMessage
     }
-    const layoutData = await parent()
-    return {
-      ...layoutData,
-      ...pageSpecificData,
-    }
+    return { ...layoutData, ...pageSpecificData }
   }
 
   pageSpecificData.isValidToken = true
@@ -80,14 +66,18 @@ export const load: PageServerLoad = async ({
   pageSpecificData.isLoggedInUserMatch =
     loggedInUserEmail === invite.invited_user_email
 
-  if (!session && pageSpecificData.invitedEmail) {
+  if (!layoutData.session && pageSpecificData.invitedEmail) {
     try {
+      const adminAuthClient = supabaseServiceRole.auth.admin
+
       const listUsersOptions = {
+        page: 1,
+        perPage: 1,
         filter: `email == "${pageSpecificData.invitedEmail}"`,
       }
 
       const { data: listUsersData, error: userCheckError } =
-        await supabaseServiceRole.auth.admin.listUsers(listUsersOptions)
+        await adminAuthClient.listUsers(listUsersOptions)
 
       if (userCheckError) {
         throw userCheckError
@@ -99,10 +89,10 @@ export const load: PageServerLoad = async ({
       pageSpecificData.message =
         "Could not verify account status. Please try logging in or signing up."
       pageSpecificData.isValidToken = false
+      return { ...layoutData, ...pageSpecificData }
     }
   }
 
-  const layoutData = await parent()
   return {
     ...layoutData,
     ...pageSpecificData,
@@ -116,10 +106,18 @@ export const actions: Actions = {
     const token = formData.get("token") as string
 
     if (!session?.user) {
-      return fail(401, { message: "You must be logged in to accept.", token })
+      return fail(401, {
+        success: false,
+        message: "You must be logged in to accept.",
+        token,
+      })
     }
     if (!token) {
-      return fail(400, { message: "Missing invitation token.", token })
+      return fail(400, {
+        success: false,
+        message: "Missing invitation token.",
+        token,
+      })
     }
 
     const { data: rpcResponseArray, error: rpcError } = await supabase.rpc(
@@ -132,13 +130,18 @@ export const actions: Actions = {
 
     if (rpcError) {
       console.error("RPC error accept_team_invitation:", rpcError)
-      return fail(500, { message: "An unexpected error occurred.", token })
+      return fail(500, {
+        success: false,
+        message: "An unexpected error occurred.",
+        token,
+      })
     }
 
     const resultData = rpcResponseArray?.[0]
 
     if (!resultData?.success) {
       return fail(400, {
+        success: false,
         message: resultData?.message || "Failed to accept invitation.",
         token,
       })

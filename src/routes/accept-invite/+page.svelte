@@ -3,18 +3,19 @@
   import { enhance } from "$app/forms"
 
   export let data: PageData
-  export let form: ActionData
+  export let form: ActionData | null = null
 
   $: ({
     isValidToken,
     message,
     teamName,
     invitedEmail,
-    loggedInUserEmail,
     isLoggedInUserMatch,
     accountExistsForEmail,
     token,
   } = data)
+
+  $: loggedInUserEmail = data.session?.user?.email
 
   // Construct login/signup URLs, passing the token
   $: loginUrl = `/login?inviteToken=${encodeURIComponent(token ?? "")}`
@@ -63,15 +64,16 @@
             <strong>{teamName}</strong>.
           </p>
 
-          <!-- Display failure message from action, if any -->
-          {#if form?.message && !form?.success}
+          <!-- Display failure message from action -->
+          <!-- Check if form exists, has message, AND success is explicitly false -->
+          {#if form?.message && form?.success === false}
             <div class="alert alert-warning mt-4">
               <span>{form.message}</span>
             </div>
           {/if}
 
           <form method="POST" action="?/acceptInvite" use:enhance>
-            <input type="hidden" name="token" value={token} />
+            <input type="hidden" name="token" value={token ?? ""} />
             <div class="card-actions justify-end mt-4">
               <button type="submit" class="btn btn-primary"
                 >Accept Invitation</button

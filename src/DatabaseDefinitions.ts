@@ -127,6 +127,8 @@ export type Database = {
       }
       team_invitations: {
         Row: {
+          accepted_at: string | null
+          accepted_by_user_id: string | null
           created_at: string
           expires_at: string
           id: string
@@ -138,6 +140,8 @@ export type Database = {
           token: string
         }
         Insert: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
@@ -149,6 +153,8 @@ export type Database = {
           token: string
         }
         Update: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
