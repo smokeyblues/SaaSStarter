@@ -29,9 +29,7 @@ export const pricingPlans = [
       "Ideal for small teams needing collaboration and more capacity.",
     price: "$25",
     priceIntervalName: "per month",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Price ID ---
     stripe_price_id: "price_1R85wgItMT7HUULI9X8ZJFHB",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Product ID ---
     stripe_product_id: "prod_S2AH7QJBTUm9U1",
     features: [
       "Up to 5 Projects",
@@ -47,9 +45,7 @@ export const pricingPlans = [
     description: "Best value for committed teams planning for the year.",
     price: "$250", // $250 / 12 = ~$20.83/mo (Approx 17% discount)
     priceIntervalName: "per year",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Price ID ---
     stripe_price_id: "price_1R85xHItMT7HUULIgYPZIlEb", // Needs a SEPARATE annual price ID in Stripe
-    // --- Uses the SAME Stripe Product ID as monthly ---
     stripe_product_id: "prod_S2AH7QJBTUm9U1",
     features: [
       "Up to 5 Projects",
@@ -67,9 +63,7 @@ export const pricingPlans = [
       "For larger teams, studios, or creators needing advanced features.",
     price: "$50",
     priceIntervalName: "per month",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Price ID ---
     stripe_price_id: "price_1R6xm3ItMT7HUULIah7Eoq8K",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Product ID ---
     stripe_product_id: "prod_S0zl395AL36WqG", // Needs a SEPARATE product ID
     features: [
       "Unlimited Projects",
@@ -87,9 +81,7 @@ export const pricingPlans = [
       "Unlock the full potential for your studio or large team annually.",
     price: "$500", // $500 / 12 = ~$41.67/mo (Approx 17% discount)
     priceIntervalName: "per year",
-    // --- IMPORTANT: Replace with YOUR ACTUAL Stripe Price ID ---
-    stripe_price_id: "price_1R85xHItMT7HUULIgYPZIlEb", // Needs a SEPARATE annual price ID in Stripe - ***THIS LOOKS LIKE A DUPLICATE FROM PRODUCER_ANNUAL in your original file - ENSURE IT'S UNIQUE***
-    // --- Uses the SAME Stripe Product ID as monthly ---
+    stripe_price_id: "price_1R6xmqItMT7HUULIWZUQEu9a",
     stripe_product_id: "prod_S0zl395AL36WqG",
     features: [
       "Unlimited Projects",
