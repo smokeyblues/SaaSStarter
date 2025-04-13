@@ -13,7 +13,7 @@
   <div class="flex-1">
     <a
       class="btn btn-ghost normal-case text-4xl font-bold font-cinzel-decorative"
-      href="/">{WebsiteName}</a
+      href="/dashboard">{WebsiteName}</a
     >
   </div>
   <div class="flex-none">

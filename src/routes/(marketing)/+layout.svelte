@@ -63,12 +63,6 @@
         <li><a href="/pricing">Pricing</a></li>
         <li><a href="/account">Account</a></li>
         <li><a href="/search">Search</a></li>
-        <li>
-          <a
-            href="https://github.com/CriticalMoments/CMSaasStarter"
-            class="border border-primary">★ us on Github</a
-          >
-        </li>
       </ul>
     </div>
   </div>
@@ -89,7 +83,7 @@
       <span class="footer-title opacity-80">Explore</span>
       <a class="link link-hover mb-1" href="/">Overview</a>
       <a class="link link-hover my-1" href="/pricing">Pricing</a>
-      <a class="link link-hover my-1" href="/blog">Blog</a>
+      <a class="link link-hover my-1" href="/roadmap">Roadmap</a>
       <a class="link link-hover my-1" href="/contact_us">Contact Us</a>
       <!-- <a class="link link-hover mb-1" href="/privacy-policy">Privacy Policy</a>
       <a class="link link-hover mb-1" href="/terms-of-service"
