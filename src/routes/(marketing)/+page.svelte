@@ -175,7 +175,7 @@
       build narrative ecosystems.
     </p>
     <a
-      href="YOUR_DISCORD_INVITE_LINK"
+      href="https://discord.gg/b8mRN9zccn"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-accent"
