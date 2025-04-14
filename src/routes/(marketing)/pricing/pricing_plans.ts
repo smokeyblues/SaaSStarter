@@ -29,8 +29,8 @@ export const pricingPlans = [
       "Ideal for small teams needing collaboration and more capacity.",
     price: "$25",
     priceIntervalName: "per month",
-    stripe_price_id: "price_1R85wgItMT7HUULI9X8ZJFHB",
-    stripe_product_id: "prod_S2AH7QJBTUm9U1",
+    stripe_price_id: "price_1RDoyVItMT7HUULIH0dLcVKX",
+    stripe_product_id: "prod_S85816nL7UywP8",
     features: [
       "Up to 5 Projects",
       "Team Collaboration (5 Members)",
@@ -45,8 +45,8 @@ export const pricingPlans = [
     description: "Best value for committed teams planning for the year.",
     price: "$250", // $250 / 12 = ~$20.83/mo (Approx 17% discount)
     priceIntervalName: "per year",
-    stripe_price_id: "price_1R85xHItMT7HUULIgYPZIlEb", // Needs a SEPARATE annual price ID in Stripe
-    stripe_product_id: "prod_S2AH7QJBTUm9U1",
+    stripe_price_id: "price_1RDoyVItMT7HUULIAseMcZKY", // Needs a SEPARATE annual price ID in Stripe
+    stripe_product_id: "prod_S85816nL7UywP8",
     features: [
       "Up to 5 Projects",
       "Team Collaboration (5 Members)",
@@ -63,8 +63,8 @@ export const pricingPlans = [
       "For larger teams, studios, or creators needing advanced features.",
     price: "$50",
     priceIntervalName: "per month",
-    stripe_price_id: "price_1R6xm3ItMT7HUULIah7Eoq8K",
-    stripe_product_id: "prod_S0zl395AL36WqG", // Needs a SEPARATE product ID
+    stripe_price_id: "price_1RDoybItMT7HUULIp9je59vF",
+    stripe_product_id: "prod_S858Mc87pqEjoS", // Needs a SEPARATE product ID
     features: [
       "Unlimited Projects",
       "Larger Teams (15+ Members)", // Define limit or use 'Custom'
@@ -81,8 +81,8 @@ export const pricingPlans = [
       "Unlock the full potential for your studio or large team annually.",
     price: "$500", // $500 / 12 = ~$41.67/mo (Approx 17% discount)
     priceIntervalName: "per year",
-    stripe_price_id: "price_1R6xmqItMT7HUULIWZUQEu9a",
-    stripe_product_id: "prod_S0zl395AL36WqG",
+    stripe_price_id: "price_1RDoybItMT7HUULIMF7VIcJm",
+    stripe_product_id: "prod_S858Mc87pqEjoS",
     features: [
       "Unlimited Projects",
       "Larger Teams (15+ Members)",
