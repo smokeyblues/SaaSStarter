@@ -127,7 +127,7 @@
       creators.
     </p>
     <a
-      href="https://discord.gg/TDKvDGF4"
+      href="https://discord.gg/xNNDvNkKAS"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-primary"
