@@ -22,7 +22,8 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: [], // Ensure no externalization of lucide-svelte
+      external: (id) =>
+        id.includes("lucide-svelte/icons") ? false : undefined, // Ensure lucide-svelte icons are bundled
     },
   },
   test: {
