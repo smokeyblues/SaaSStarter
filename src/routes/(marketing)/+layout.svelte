@@ -1,6 +1,7 @@
 <script lang="ts">
   import { WebsiteName } from "./../../config"
   import "../../app.css"
+  import ThemeToggle from "../../lib/components/ThemeToggle.svelte"
 
   interface Props {
     children?: import("svelte").Snippet
@@ -35,6 +36,9 @@
           >
         </a>
       </li>
+      <li class="md:mx-2">
+        <ThemeToggle />
+      </li>
     </ul>
     <div class="dropdown dropdown-end sm:hidden">
       <!-- svelte-ignore a11y_label_has_associated_control -->
@@ -63,6 +67,9 @@
         <li><a href="/pricing">Pricing</a></li>
         <li><a href="/account">Account</a></li>
         <li><a href="/search">Search</a></li>
+        <li>
+          <ThemeToggle />
+        </li>
       </ul>
     </div>
   </div>

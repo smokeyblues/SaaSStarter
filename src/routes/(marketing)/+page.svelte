@@ -81,7 +81,7 @@
         class="mt-6 md:mt-8 flex flex-row flex-wrap gap-4 place-content-center"
       >
         <a href="/pricing" class="btn btn-primary btn-lg px-8 shadow-lg">
-          Get Started Free
+          Get Started for Free
         </a>
         <a href="/roadmap" class="btn btn-ghost btn-lg px-8">
           Explore the Vision

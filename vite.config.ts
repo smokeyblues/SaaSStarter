@@ -17,6 +17,9 @@ export default defineConfig({
       },
     },
   ],
+  ssr: {
+    noExternal: ["lucide-svelte"], // Ensure lucide-svelte is bundled for SSR
+  },
   test: {
     include: ["src/**/*.{test,spec}.{js,ts}"],
     globals: true, /// allows to skip import of test functions like `describe`, `it`, `expect`, etc.
