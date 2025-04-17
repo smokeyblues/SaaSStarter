@@ -1,48 +1,87 @@
-<!-- src/routes/(app)/projects/[projectId]/+page.svelte -->
 <script lang="ts">
   import { enhance } from "$app/forms"
-  import type { ActionData, PageData } from "./$types" // Will get types from load function later
-  import { page } from "$app/stores" // To access route params easily if needed, though data prop is better
+  import type { ActionData, PageData } from "./$types"
+  import { page } from "$app/stores"
 
-  let { data, form }: { data: PageData; form: ActionData } = $props()
+  interface SectionStatus {
+    treatment?: {
+      hasSynopsis?: boolean
+      hasCharacters?: boolean
+    }
+    business?: {
+      hasAudience?: boolean
+      hasGoals?: boolean
+    }
+    design?: {
+      isStarted?: boolean
+    }
+    functional?: {
+      isStarted?: boolean
+    }
+    technology?: {
+      isStarted?: boolean
+    }
+  }
+
+  interface ExtendedPageData extends PageData {
+    sectionStatus?: SectionStatus
+  }
+
+  let { data, form }: { data: ExtendedPageData; form: ActionData } = $props()
 
   // State for editing project name
   let editingName = $state(false)
   let projectNameInput = $state(data.project?.name ?? "")
 
   $effect(() => {
-    // Update input only if not editing
     if (!editingName) {
       projectNameInput = data.project?.name ?? ""
     }
   })
 
-  // Define the bible sections for iteration
+  // Define the bible sections with reactive status
   const bibleSections = [
     {
       name: "Treatment",
       slug: "treatment",
       description: "Story world, synopsis, characters...",
-    },
-    {
-      name: "Functional Spec",
-      slug: "functional",
-      description: "User experience, platforms, rules...",
-    },
-    {
-      name: "Design Spec",
-      slug: "design",
-      description: "Look & feel, branding, assets...",
-    },
-    {
-      name: "Tech Spec",
-      slug: "technology",
-      description: "Infrastructure, architecture, build...",
+      isActive: true, // Always active
+      isComplete:
+        data.sectionStatus?.treatment?.hasSynopsis &&
+        data.sectionStatus?.treatment?.hasCharacters,
     },
     {
       name: "Business & Marketing",
       slug: "business",
       description: "Goals, audience, budget, team...",
+      isActive:
+        data.sectionStatus?.treatment?.hasSynopsis &&
+        data.sectionStatus?.treatment?.hasCharacters,
+      isComplete:
+        data.sectionStatus?.business?.hasAudience &&
+        data.sectionStatus?.business?.hasGoals,
+    },
+    {
+      name: "Design Spec",
+      slug: "design",
+      description: "Look & feel, branding, assets...",
+      isActive:
+        data.sectionStatus?.business?.hasAudience &&
+        data.sectionStatus?.business?.hasGoals,
+    },
+    {
+      name: "Functional Spec",
+      slug: "functional",
+      description: "User experience, platforms, rules...",
+      isActive:
+        data.sectionStatus?.business?.hasAudience &&
+        data.sectionStatus?.business?.hasGoals,
+    },
+    {
+      name: "Tech Spec",
+      slug: "technology",
+      description: "Infrastructure, architecture, build...",
+      isActive: data.sectionStatus?.functional?.isStarted,
     },
   ]
 
@@ -53,7 +92,7 @@
         `Are you sure you want to permanently delete project "${projectName}"? This action cannot be undone.`,
       )
     ) {
-      event.preventDefault() // Stop form submission
+      event.preventDefault()
     }
   }
 </script>
@@ -64,7 +103,6 @@
     class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
   >
     <div>
-      <!-- Optional Breadcrumbs -->
       <div class="text-sm breadcrumbs mb-1">
         <ul>
           <li><a href="/dashboard">Dashboard</a></li>
@@ -128,14 +166,12 @@
       >
         <li><button onclick={() => (editingName = true)}>Edit Name</button></li>
         <li>
-          <!-- Delete Project Form -->
           <form method="POST" action="?/deleteProject" onsubmit={confirmDelete}>
             <button type="submit" class="w-full text-left text-error"
               >Delete Project</button
             >
           </form>
         </li>
-        <!-- Add other actions like 'Manage Access' later -->
       </ul>
     </div>
   </div>
@@ -154,19 +190,29 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {#each bibleSections as section}
       <div
-        class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out"
+        class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out {section.isActive
+          ? ''
+          : 'opacity-50 pointer-events-none'}"
       >
         <div class="card-body">
-          <h2 class="card-title">{section.name}</h2>
+          <h2 class="card-title">
+            {section.name}
+            {#if section.isActive && !section.isComplete}
+              <span class="badge badge-primary ml-2">Start Here</span>
+            {/if}
+            {#if section.isComplete}
+              <span class="badge badge-success ml-2">Complete</span>
+            {/if}
+          </h2>
           <p class="text-sm text-neutral-600 flex-grow">
             {section.description}
           </p>
-          <!-- TODO: Add status indicator later (e.g., Not Started, Complete) -->
           <div class="card-actions justify-end mt-4">
-            <!-- Link to the specific section route (will be created later) -->
             <a
               href="/projects/{data.project?.id}/{section.slug}"
-              class="btn btn-primary btn-sm"
+              class="btn btn-primary btn-sm {section.isActive
+                ? ''
+                : 'btn-disabled'}"
             >
               View / Edit
             </a>
@@ -175,6 +221,19 @@
       </div>
     {/each}
   </div>
+
+  <!-- Market Testing Prompt -->
+  {#if data.sectionStatus?.business?.hasAudience && data.sectionStatus?.business?.hasGoals}
+    <div class="alert alert-info mt-6">
+      <div>
+        <span>
+          Consider testing your core concept! Exploring initial Design
+          Aesthetics and Functional User Journeys can help create effective test
+          materials.
+        </span>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
