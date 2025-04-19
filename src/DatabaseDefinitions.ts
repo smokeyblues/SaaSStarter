@@ -75,6 +75,336 @@ export type Database = {
         }
         Relationships: []
       }
+      project_assets: {
+        Row: {
+          asset_category:
+            | Database["public"]["Enums"]["asset_category_enum"]
+            | null
+          created_at: string | null
+          file_name: string
+          file_path: string
+          file_type: string | null
+          id: string
+          project_id: string
+          size_bytes: number | null
+          updated_at: string | null
+          uploaded_by_user_id: string | null
+        }
+        Insert: {
+          asset_category?:
+            | Database["public"]["Enums"]["asset_category_enum"]
+            | null
+          created_at?: string | null
+          file_name: string
+          file_path: string
+          file_type?: string | null
+          id?: string
+          project_id: string
+          size_bytes?: number | null
+          updated_at?: string | null
+          uploaded_by_user_id?: string | null
+        }
+        Update: {
+          asset_category?:
+            | Database["public"]["Enums"]["asset_category_enum"]
+            | null
+          created_at?: string | null
+          file_name?: string
+          file_path?: string
+          file_type?: string | null
+          id?: string
+          project_id?: string
+          size_bytes?: number | null
+          updated_at?: string | null
+          uploaded_by_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_business_details: {
+        Row: {
+          business_models: string | null
+          created_at: string | null
+          goals_creative: string | null
+          goals_economic: string | null
+          goals_user: string | null
+          id: string
+          project_id: string
+          success_indicators: string | null
+          target_audience: string | null
+          updated_at: string | null
+          user_need: string | null
+        }
+        Insert: {
+          business_models?: string | null
+          created_at?: string | null
+          goals_creative?: string | null
+          goals_economic?: string | null
+          goals_user?: string | null
+          id?: string
+          project_id: string
+          success_indicators?: string | null
+          target_audience?: string | null
+          updated_at?: string | null
+          user_need?: string | null
+        }
+        Update: {
+          business_models?: string | null
+          created_at?: string | null
+          goals_creative?: string | null
+          goals_economic?: string | null
+          goals_user?: string | null
+          id?: string
+          project_id?: string
+          success_indicators?: string | null
+          target_audience?: string | null
+          updated_at?: string | null
+          user_need?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_business_details_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_design_specs: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_design_specs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_feedback_log: {
+        Row: {
+          feedback_received: string
+          id: string
+          logged_at: string | null
+          logged_by_user_id: string | null
+          platform_source: string
+          project_id: string
+          shared_item_description: string
+        }
+        Insert: {
+          feedback_received: string
+          id?: string
+          logged_at?: string | null
+          logged_by_user_id?: string | null
+          platform_source: string
+          project_id: string
+          shared_item_description: string
+        }
+        Update: {
+          feedback_received?: string
+          id?: string
+          logged_at?: string | null
+          logged_by_user_id?: string | null
+          platform_source?: string
+          project_id?: string
+          shared_item_description?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_feedback_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_functional_specs: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_functional_specs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_plot_points: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          order_index: number
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          order_index?: number
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          order_index?: number
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_plot_points_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_tech_specs: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tech_specs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_treatments: {
+        Row: {
+          backstory_context: string | null
+          characterization_attitude: string | null
+          created_at: string | null
+          id: string
+          project_id: string
+          synopsis: string | null
+          tagline: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          backstory_context?: string | null
+          characterization_attitude?: string | null
+          created_at?: string | null
+          id?: string
+          project_id: string
+          synopsis?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          backstory_context?: string | null
+          characterization_attitude?: string | null
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          synopsis?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_treatments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_user_scenarios: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          order_index: number
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          order_index?: number
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          order_index?: number
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_user_scenarios_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
@@ -278,8 +608,24 @@ export type Database = {
           team_owner_user_id: string
         }[]
       }
+      is_project_member: {
+        Args: { p_project_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
+      asset_category_enum:
+        | "script"
+        | "concept_art"
+        | "moodboard"
+        | "storyboard"
+        | "wireframe"
+        | "style_guide"
+        | "audio"
+        | "video"
+        | "image"
+        | "document"
+        | "other"
       team_role: "owner" | "admin" | "member"
     }
     CompositeTypes: {
@@ -396,6 +742,19 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      asset_category_enum: [
+        "script",
+        "concept_art",
+        "moodboard",
+        "storyboard",
+        "wireframe",
+        "style_guide",
+        "audio",
+        "video",
+        "image",
+        "document",
+        "other",
+      ],
       team_role: ["owner", "admin", "member"],
     },
   },
