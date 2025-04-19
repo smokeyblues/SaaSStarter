@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ThemeToggle from "$lib/components/ThemeToggle.svelte"
   import { WebsiteName } from "../../config"
   import "./../../app.css"
 
@@ -35,6 +36,9 @@
           >
         </a>
       </li>
+      <li>
+        <ThemeToggle />
+      </li>
     </ul>
     <div class="dropdown dropdown-end sm:hidden">
       <!-- svelte-ignore a11y_label_has_associated_control -->
@@ -68,6 +72,9 @@
             href="https://github.com/CriticalMoments/CMSaasStarter"
             class="border border-primary">★ us on Github</a
           >
+        </li>
+        <li>
+          <ThemeToggle />
         </li>
       </ul>
     </div>
