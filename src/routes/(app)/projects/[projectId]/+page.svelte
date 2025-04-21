@@ -26,12 +26,9 @@
     }
   }
 
-  interface ExtendedPageData extends PageData {
-    sectionStatus?: SectionStatus
-  }
   // --- End Type Definitions ---
 
-  let { data, form }: { data: ExtendedPageData; form: ActionData } = $props()
+  let { data, form }: { data: PageData; form: ActionData } = $props()
 
   // State for editing project name (Keep as is)
   let editingName = $state(false)

@@ -26,9 +26,6 @@
     }
   }
 
-  interface ExtendedPageData extends LayoutData {
-    sectionStatus?: SectionStatus
-  }
   // --- End Type Definitions ---
 
   // Props: includes the 'children' snippet for rendering child routes
@@ -36,7 +33,7 @@
     data,
     form,
     children, // <<< Make sure children is destructured
-  }: { data: ExtendedPageData; form: ActionData; children: Snippet } = $props()
+  }: { data: LayoutData; form: ActionData; children: Snippet } = $props()
 
   // State for editing project name (Keep as is)
   let editingName = $state(false)

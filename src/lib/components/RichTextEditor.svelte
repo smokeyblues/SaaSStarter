@@ -3,7 +3,7 @@
   import { Editor } from "@tiptap/core"
   import StarterKit from "@tiptap/starter-kit"
   import Placeholder from "@tiptap/extension-placeholder"
-  import { onMount } from "svelte"
+  import { onMount, tick } from "svelte" // Import tick
   import type { EditorEvents } from "@tiptap/core"
 
   let {
@@ -20,11 +20,18 @@
 
   let editorElement: HTMLDivElement | undefined = $state()
   let editor: Editor | undefined = $state()
-  let hiddenInputValue = $state(value) // Local state for hidden input
+  let hiddenInputValue = $state(value) // Local state for hidden input, initialized with prop
+  let isEditable = $state(false) // Track if editor is ready and editable
 
   // Initialize TipTap Editor
   onMount(() => {
-    if (!editorElement) return
+    // Ensure the element is mounted before proceeding
+    // await tick()
+
+    if (!editorElement) {
+      console.error("RichTextEditor: editorElement not found on mount.")
+      return
+    }
 
     editor = new Editor({
       element: editorElement,
@@ -32,46 +39,68 @@
         StarterKit, // Basic formatting (bold, italic, paragraphs, etc.)
         Placeholder.configure({ placeholder }),
       ],
-      content: value, // Set initial content
+      // IMPORTANT: Start with initial content but ensure it's editable
+      content: value,
+      editable: true, // Explicitly set editable
       editorProps: {
         attributes: {
-          // Add Tailwind/DaisyUI classes for styling the editable area
           class:
             "prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none p-3 border border-base-300 rounded-md min-h-[150px] bg-base-100",
         },
       },
-      // Update hidden input on changes (or use onBlur)
+      // Update hidden input on changes
       onUpdate: ({ editor: updatedEditor }: EditorEvents["update"]) => {
         hiddenInputValue = updatedEditor.getHTML()
       },
       // Optionally trigger external save on blur
       onBlur: ({ editor: blurredEditor }: EditorEvents["blur"]) => {
         const currentHTML = blurredEditor.getHTML()
-        hiddenInputValue = currentHTML
+        hiddenInputValue = currentHTML // Ensure hidden input is synced on blur too
         if (onBlur) {
           onBlur(currentHTML)
         }
       },
+      // Track when editor becomes editable
+      onCreate: () => {
+        isEditable = true
+      },
+      onTransaction: () => {
+        // Transactions happen on content change, selection change etc.
+        // Check editable state here too if needed, though onCreate should suffice
+        isEditable = editor?.isEditable ?? false
+      },
     })
 
-    // Update hidden input initially
+    // Ensure initial value is set for the hidden input
     hiddenInputValue = editor?.getHTML() ?? ""
 
     return () => {
       editor?.destroy() // Cleanup on unmount
+      editor = undefined
     }
   })
 
   // Update editor if the value prop changes from outside
   $effect(() => {
-    if (editor && value !== hiddenInputValue) {
-      // Avoid recursive updates if change originated from editor
-      editor.commands.setContent(value, false) // false = don't emit update event
-      hiddenInputValue = value // Sync hidden input too
+    // Only update if editor exists, is mounted, and the external value differs from the internal state
+    if (editor && editor.isMounted && value !== hiddenInputValue) {
+      // Check if the editor's current content is actually different
+      // This helps prevent resetting cursor position unnecessarily if value prop updates rapidly
+      // but editor content hasn't actually changed from the external value yet.
+      const editorHTML = editor.getHTML()
+      if (value !== editorHTML) {
+        console.log(
+          "RTE: External value change detected, updating editor content.",
+        )
+        // Use 'false' to prevent triggering 'onUpdate' recursively
+        editor.commands.setContent(value, false)
+      }
+      // Always ensure hidden input matches the incoming prop if we process this effect
+      hiddenInputValue = value
     }
   })
 
-  // Toolbar functions
+  // Toolbar functions (remain the same)
   const toggleBold = () => editor?.chain().focus().toggleBold().run()
   const toggleItalic = () => editor?.chain().focus().toggleItalic().run()
   const setParagraph = () => editor?.chain().focus().setParagraph().run()
@@ -79,7 +108,6 @@
     editor?.chain().focus().toggleBulletList().run()
   const toggleOrderedList = () =>
     editor?.chain().focus().toggleOrderedList().run()
-  // Add more functions as needed (heading, blockquote, etc.)
 </script>
 
 <div class="border border-base-300 rounded-md bg-base-100">
@@ -89,9 +117,11 @@
   <!-- Toolbar -->
   {#if editor}
     <div class="toolbar p-2 border-b border-base-300 flex flex-wrap gap-1">
+      <!-- Disable toolbar if editor isn't editable -->
       <button
         type="button"
         onclick={toggleBold}
+        disabled={!isEditable}
         class:btn-active={editor.isActive("bold")}
         class="btn btn-xs btn-ghost"
         aria-label="Bold">B</button
@@ -99,6 +129,7 @@
       <button
         type="button"
         onclick={toggleItalic}
+        disabled={!isEditable}
         class:btn-active={editor.isActive("italic")}
         class="btn btn-xs btn-ghost"
         aria-label="Italic">I</button
@@ -106,6 +137,7 @@
       <button
         type="button"
         onclick={setParagraph}
+        disabled={!isEditable}
         class:btn-active={editor.isActive("paragraph")}
         class="btn btn-xs btn-ghost"
         aria-label="Paragraph">P</button
@@ -113,6 +145,7 @@
       <button
         type="button"
         onclick={toggleBulletList}
+        disabled={!isEditable}
         class:btn-active={editor.isActive("bulletList")}
         class="btn btn-xs btn-ghost"
         aria-label="Bullet List">•</button
@@ -120,6 +153,7 @@
       <button
         type="button"
         onclick={toggleOrderedList}
+        disabled={!isEditable}
         class:btn-active={editor.isActive("orderedList")}
         class="btn btn-xs btn-ghost"
         aria-label="Numbered List">1.</button
@@ -129,7 +163,16 @@
   {/if}
 
   <!-- TipTap Editor Mount Point -->
-  <div bind:this={editorElement}></div>
+  <!-- Add a key based on value if frequent external changes cause issues (forces re-render) -->
+  {#key value}
+    <div bind:this={editorElement}></div>
+  {/key}
+
+  {#if !editor && !editorElement}
+    <p class="p-3 text-sm text-base-content/50">Loading Editor...</p>
+  {:else if editor && !isEditable}
+    <p class="p-3 text-sm text-base-content/50">Editor initializing...</p>
+  {/if}
 </div>
 
 <style>
@@ -145,5 +188,9 @@
   .toolbar .btn-active {
     background-color: hsl(var(--b3)); /* Or primary color */
     color: hsl(var(--pc)); /* Ensure contrast */
+  }
+  .toolbar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
