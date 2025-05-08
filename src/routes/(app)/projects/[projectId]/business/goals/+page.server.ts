@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({
     .maybeSingle() // Use maybeSingle as it might not exist yet
 
   // Run all data fetching in parallel
-  const [{ data: business, error: businessError }] = await Promise.all([
+  const [{ data: businessDetails, error: businessError }] = await Promise.all([
     businessPromise,
   ])
 
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({
 
   return {
     // Ensure we pass back null or data, never undefined for business
-    business: business ?? null,
+    businessDetails: businessDetails ?? null,
   }
 }
 
