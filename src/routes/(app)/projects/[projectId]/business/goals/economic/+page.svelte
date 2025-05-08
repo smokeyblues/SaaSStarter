@@ -20,7 +20,7 @@
       return () => clearTimeout(timer)
     }
   })
-  let businessGoals = $derived(data.business ?? { goals_economic: "" })
+  let businessGoals = $derived(data.businessDetails ?? { goals_economic: "" })
 </script>
 
 <section>
