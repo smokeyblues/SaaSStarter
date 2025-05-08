@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({
   // Fetching the core business data - RLS ensures user has access
   const businessPromise = supabase
     .from("project_business_details")
-    .select("goals_user")
+    .select("*")
     .eq("project_id", params.projectId)
     .maybeSingle() // Use maybeSingle as it might not exist yet
 
@@ -37,8 +37,8 @@ export const load: PageServerLoad = async ({
 }
 
 export const actions: Actions = {
-  saveGoals: async ({ request, locals: { supabase, user }, params }) => {
-    const actionName = "saveGoals"
+  saveUserGoals: async ({ request, locals: { supabase, user }, params }) => {
+    const actionName = "saveUserGoals"
     if (!user) return fail(401, { action: actionName, message: "Unauthorized" })
     const formData = await request.formData()
     const field = formData.get("field")?.toString()
@@ -69,7 +69,7 @@ export const actions: Actions = {
       success: true,
       action: actionName,
       field,
-      message: "Goals saved.",
+      message: "User Goals saved.",
     }
   },
 }

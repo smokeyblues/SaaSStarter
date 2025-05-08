@@ -1,4 +1,4 @@
-// src/routes/(app)/projects/[projectId]/treatment/+page.server.ts
+// src/routes/(app)/projects/[projectId]/business/+page.server.ts
 import { error, fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 import type { Database } from "../../../../../DatabaseDefinitions" // Adjust path if needed
@@ -13,6 +13,8 @@ interface ScriptAssetWithUrl extends ScriptAsset {
   url: string | null // Add the url property, allowing null if generation fails
 }
 
+// Define the type for business details (adjust path if needed)
+
 export const load: PageServerLoad = async ({
   locals: { supabase, user },
   params,
@@ -24,68 +26,39 @@ export const load: PageServerLoad = async ({
     error(404, "Project not found")
   }
 
-  // Verify project access using the RLS helper function implicitly via queries
-  // Fetching the core treatment data - RLS ensures user has access
-  const businessPromise = supabase
+  // Fetch the project's business details
+  const { data: businessDetails, error: detailsError } = await supabase
     .from("project_business_details")
     .select("*")
     .eq("project_id", params.projectId)
-    .maybeSingle() // Use maybeSingle as it might not exist yet
+    .maybeSingle() // Use maybeSingle as details might not exist yet
 
-  const goalsPromise = supabase
-    .from("project_business_details")
-    .select("goals_user, goals_creative, goals_economic")
-    .eq("project_id", params.projectId)
-
-  const successIndicatorsPromise = supabase
-    .from("project_business_details")
-    .select("*")
-    .eq("project_id", params.projectId)
-
-  // Fetch script assets metadata
-  const audiencePromise = supabase
-    .from("project_business_details")
-    .select("*")
-    .eq("project_id", params.projectId)
-    .eq("asset_category", "script") // Filter by the category
-    .order("created_at", { ascending: true })
-
-  // Run all data fetching in parallel
-  const [
-    { data: business, error: businessError },
-    { data: goals, error: goalsError },
-    { data: successIndicators, error: successIndicatorsError },
-    { data: audience, error: audienceError },
-  ] = await Promise.all([
-    businessPromise,
-    goalsPromise,
-    successIndicatorsPromise,
-    audiencePromise,
-  ])
-
-  // Check for critical errors (e.g., if RLS denied access unexpectedly)
-  // Individual sections might fail gracefully, but log errors.
-  if (businessError)
-    console.error("Error loading business:", businessError.message)
-  if (goalsError) console.error("Error loading goals:", goalsError.message)
-  if (successIndicatorsError)
+  if (detailsError) {
+    // Log the error but don't necessarily block the page load unless it's critical
+    // RLS might return an error if the user doesn't have access, which is expected
     console.error(
-      "Error loading success indicators:",
-      successIndicatorsError.message,
+      "Error loading project business details:",
+      detailsError.message,
     )
+    // Optionally, you could throw an error if the error indicates a real problem:
+    // if (detailsError.code !== 'PGRST116') { // PGRST116 = Range Not Satisfiable (empty)
+    //     error(500, `Failed to load business details: ${detailsError.message}`)
+    // }
+  }
 
   return {
-    // Ensure we pass back null or data, never undefined for treatment
-    business: business ?? null,
-    goals: goals ?? [],
-    successIndicators: successIndicators ?? [],
-    audience: audience ?? [],
+    // Ensure we pass back null or the data, matching the expected type
+    businessDetails: businessDetails ?? null,
   }
 }
 
 export const actions: Actions = {
-  saveBusinessText: async ({ request, locals: { supabase, user }, params }) => {
-    const actionName = "saveBusinessText" // <<< Define action name
+  saveBusinessDetail: async ({
+    request,
+    locals: { supabase, user },
+    params,
+  }) => {
+    const actionName = "saveBusinessDetail" // Identify the action
     if (!user) return fail(401, { action: actionName, message: "Unauthorized" })
     if (!params.projectId)
       return fail(400, { action: actionName, message: "Project ID missing" })
@@ -94,49 +67,75 @@ export const actions: Actions = {
     const field = formData.get("field")?.toString()
     const content = formData.get("content")
 
-    if (!field || content === null || content === undefined) {
+    // Validate the field name
+    const allowedFields: Array<
+      keyof Omit<
+        Database["public"]["Tables"]["project_business_details"]["Row"],
+        "id" | "project_id" | "created_at" | "updated_at"
+      >
+    > = [
+      "goals_user",
+      "goals_creative",
+      "goals_economic",
+      "success_indicators",
+      "target_audience",
+      "user_need",
+      "business_models", // Include other fields if they will use this action
+    ]
+
+    if (!field || !allowedFields.includes(field as any)) {
       return fail(400, {
         action: actionName,
         field,
-        error: "Missing field or content value",
+        error: "Invalid or missing field specified",
       })
     }
-    const allowedFields = [
-      "tagline",
-      "backstory_context",
-      "synopsis",
-      "characterization_attitude",
-    ]
-    if (!allowedFields.includes(field)) {
+
+    // Allow empty string for content, but not null/undefined
+    if (content === null || content === undefined) {
       return fail(400, {
         action: actionName,
         field,
-        error: "Invalid field specified",
+        error: "Missing content value",
       })
     }
     const contentString = content.toString()
 
+    // Upsert the data into the project_business_details table
     const { error: upsertError } = await supabase
       .from("project_business_details")
       .upsert(
-        { project_id: params.projectId, [field]: contentString },
-        { onConflict: "project_id" },
+        {
+          project_id: params.projectId,
+          // Use computed property name to set the correct field
+          [field]: contentString,
+        },
+        {
+          // Specify the conflict target (the unique constraint)
+          onConflict: "project_id",
+        },
       )
 
     if (upsertError) {
-      console.error(`Error saving business field '${field}':`, upsertError)
+      console.error(
+        `Error saving business detail field '${field}':`,
+        upsertError,
+      )
+      // Provide more specific feedback if possible (e.g., check error code)
       return fail(500, {
         action: actionName,
         field,
         error: `Database error: ${upsertError.message}`,
       })
     }
+
+    // Success!
     return {
       success: true,
       action: actionName,
-      field,
-      message: `${field.replace(/_/g, " ")} saved.`,
-    } // <<< Added action
+      field, // Return the field that was updated
+      message: `${field.replace(/_/g, " ")} saved successfully.`, // User-friendly message
+    }
   },
 
   addGoal: async ({ request, locals: { supabase, user }, params }) => {

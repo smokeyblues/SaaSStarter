@@ -3,6 +3,7 @@
   import type { LayoutData } from "./$types"
   import { page } from "$app/stores"
   let { data, children }: { data: LayoutData; children: Snippet } = $props()
+  let projectId = $derived($page.params.projectId);
 </script>
 
 <div class="flex flex-col md:flex-row gap-8">
@@ -11,35 +12,35 @@
     <ul class="menu bg-base-200 rounded-box p-2">
       <li>
         <a
-          href="treatment/tagline"
+          href={`/projects/${projectId}/treatment/tagline`}
           class={$page.url.pathname.endsWith("/tagline") ? "active" : ""}
           >Tagline</a
         >
       </li>
       <li>
         <a
-          href="treatment/backstory"
+          href={`/projects/${projectId}/treatment/backstory`}
           class={$page.url.pathname.endsWith("/backstory") ? "active" : ""}
           >Back Story & Context</a
         >
       </li>
       <li>
         <a
-          href="treatment/synopsis"
+          href={`/projects/${projectId}/treatment/synopsis`}
           class={$page.url.pathname.endsWith("/synopsis") ? "active" : ""}
           >Synopsis</a
         >
       </li>
       <li>
         <a
-          href="treatment/plotpoints"
+          href={`/projects/${projectId}/treatment/plotpoints`}
           class={$page.url.pathname.endsWith("/plotpoints") ? "active" : ""}
           >Plot Points</a
         >
       </li>
       <li>
         <a
-          href="treatment/characterization"
+          href={`/projects/${projectId}/treatment/characterization`}
           class={$page.url.pathname.endsWith("/characterization")
             ? "active"
             : ""}>Characterization & Attitude</a
@@ -47,14 +48,14 @@
       </li>
       <li>
         <a
-          href="treatment/scripts"
+          href={`/projects/${projectId}/treatment/scripts`}
           class={$page.url.pathname.endsWith("/scripts") ? "active" : ""}
           >Scripts</a
         >
       </li>
       <li>
         <a
-          href="treatment/scenarios"
+          href={`/projects/${projectId}/treatment/scenarios`}
           class={$page.url.pathname.endsWith("/scenarios") ? "active" : ""}
           >User-centric Scenarios</a
         >
