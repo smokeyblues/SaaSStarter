@@ -64,7 +64,7 @@ export const actions: Actions = {
         { onConflict: "project_id" },
       )
     if (upsertError) {
-      console.error(`Error saving goals:`, upsertError)
+      console.error(`Error saving creative goals:`, upsertError)
       return fail(500, {
         action: actionName,
         field,
