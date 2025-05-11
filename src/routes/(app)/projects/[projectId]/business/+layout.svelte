@@ -1,7 +1,7 @@
 <!-- src/routes/(app)/projects/[projectId]/business/+layout.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte"
-import { goto } from '$app/navigation';
+  import { goto } from "$app/navigation"
   // We might need LayoutData if we need projectId, but $page should suffice
   // import type { LayoutData } from './$types';
   import { page } from "$app/stores"
@@ -25,6 +25,7 @@ import { goto } from '$app/navigation';
     { name: "Success Indicators", slug: "success_indicators" },
     { name: "User Need", slug: "user_need" },
     { name: "Target Audience & Marketing", slug: "audience" },
+    { name: "Business Models", slug: "models" },
     // Add other top-level sections here later (e.g., Business Models, IP/Licensing)
   ]
 
@@ -36,16 +37,16 @@ import { goto } from '$app/navigation';
   ]
 
   function handleGoalsTextClick(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation(); // Prevents details toggle
-    goto(getPath('goals'));
+    event.preventDefault()
+    event.stopPropagation() // Prevents details toggle
+    goto(getPath("goals"))
   }
 
   function handleGoalsTextKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      event.stopPropagation();
-      goto(getPath('goals'));
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      event.stopPropagation()
+      goto(getPath("goals"))
     }
   }
 </script>
@@ -127,7 +128,6 @@ import { goto } from '$app/navigation';
       {/each}
 
       <!-- Add placeholders for future sections -->
-      <li><span class="disabled opacity-50">Business Models (Soon)</span></li>
       <li><span class="disabled opacity-50">Projections (Soon)</span></li>
       <li><span class="disabled opacity-50">Team (Soon)</span></li>
       <li><span class="disabled opacity-50">IP/Licensing (Soon)</span></li>
