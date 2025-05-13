@@ -81,42 +81,51 @@ export type Database = {
             | Database["public"]["Enums"]["asset_category_enum"]
             | null
           created_at: string | null
+          design_subsection_tag: string | null
           file_name: string
           file_path: string
           file_type: string | null
           id: string
           project_id: string
           size_bytes: number | null
+          storyboard_collection_id: string | null
           updated_at: string | null
           uploaded_by_user_id: string | null
+          wireframe_set_id: string | null
         }
         Insert: {
           asset_category?:
             | Database["public"]["Enums"]["asset_category_enum"]
             | null
           created_at?: string | null
+          design_subsection_tag?: string | null
           file_name: string
           file_path: string
           file_type?: string | null
           id?: string
           project_id: string
           size_bytes?: number | null
+          storyboard_collection_id?: string | null
           updated_at?: string | null
           uploaded_by_user_id?: string | null
+          wireframe_set_id?: string | null
         }
         Update: {
           asset_category?:
             | Database["public"]["Enums"]["asset_category_enum"]
             | null
           created_at?: string | null
+          design_subsection_tag?: string | null
           file_name?: string
           file_path?: string
           file_type?: string | null
           id?: string
           project_id?: string
           size_bytes?: number | null
+          storyboard_collection_id?: string | null
           updated_at?: string | null
           uploaded_by_user_id?: string | null
+          wireframe_set_id?: string | null
         }
         Relationships: [
           {
@@ -124,6 +133,20 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_assets_storyboard_collection_id_fkey"
+            columns: ["storyboard_collection_id"]
+            isOneToOne: false
+            referencedRelation: "project_storyboard_collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_assets_wireframe_set_id_fkey"
+            columns: ["wireframe_set_id"]
+            isOneToOne: false
+            referencedRelation: "project_wireframe_sets"
             referencedColumns: ["id"]
           },
         ]
@@ -180,19 +203,37 @@ export type Database = {
       }
       project_design_specs: {
         Row: {
+          branding_guidelines_intro: string | null
           created_at: string | null
+          design_aesthetic_description: string | null
+          full_assets_list_description: string | null
           id: string
+          media_design_styles_notes: string | null
           project_id: string
+          style_guide_notes: string | null
+          updated_at: string | null
         }
         Insert: {
+          branding_guidelines_intro?: string | null
           created_at?: string | null
+          design_aesthetic_description?: string | null
+          full_assets_list_description?: string | null
           id?: string
+          media_design_styles_notes?: string | null
           project_id: string
+          style_guide_notes?: string | null
+          updated_at?: string | null
         }
         Update: {
+          branding_guidelines_intro?: string | null
           created_at?: string | null
+          design_aesthetic_description?: string | null
+          full_assets_list_description?: string | null
           id?: string
+          media_design_styles_notes?: string | null
           project_id?: string
+          style_guide_notes?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -303,6 +344,44 @@ export type Database = {
           },
         ]
       }
+      project_storyboard_collections: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          order_index: number | null
+          project_design_spec_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          project_design_spec_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          project_design_spec_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_storyboard_collections_project_design_spec_id_fkey"
+            columns: ["project_design_spec_id"]
+            isOneToOne: false
+            referencedRelation: "project_design_specs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_tech_specs: {
         Row: {
           created_at: string | null
@@ -401,6 +480,47 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_wireframe_sets: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          order_index: number | null
+          platform_tag: string | null
+          project_design_spec_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          platform_tag?: string | null
+          project_design_spec_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order_index?: number | null
+          platform_tag?: string | null
+          project_design_spec_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_wireframe_sets_project_design_spec_id_fkey"
+            columns: ["project_design_spec_id"]
+            isOneToOne: false
+            referencedRelation: "project_design_specs"
             referencedColumns: ["id"]
           },
         ]
