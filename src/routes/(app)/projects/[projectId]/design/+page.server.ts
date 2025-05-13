@@ -35,20 +35,20 @@ export const load: PageServerLoad = async ({
   const storyboardsPromise = supabase
     .from("project_storyboard_collections")
     .select("*")
-    .eq("project_id", params.projectId)
+    .eq("project_design_spec_id", params.projectId)
     .order("order_index", { ascending: true })
 
   const wireframesPromise = supabase
     .from("project_wireframe_sets")
     .select("*")
-    .eq("project_id", params.projectId)
+    .eq("project_design_spec_id", params.projectId)
     .order("order_index", { ascending: true })
 
   const assetsListPromise = supabase
     .from("project_assets")
     .select("*")
     .eq("project_id", params.projectId)
-    .order("order_index", { ascending: true })
+    .order("asset_category", { ascending: true })
 
   // Run all data fetching in parallel
   const [
