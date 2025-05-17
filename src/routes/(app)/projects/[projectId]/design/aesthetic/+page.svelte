@@ -21,7 +21,7 @@
     }
   })
   let designDetails = $derived(
-    data.design ?? { design_aesthetic_description: "" },
+    data.designDetails ?? { design_aesthetic_description: "" },
   )
 </script>
 

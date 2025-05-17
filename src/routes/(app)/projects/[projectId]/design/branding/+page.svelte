@@ -20,7 +20,7 @@
       return () => clearTimeout(timer)
     }
   })
-  let branding = $derived(data.design ?? { branding_guidelines_intro: "" })
+  let branding = $derived(data.designDetails ?? { branding_guidelines_intro: "" })
 </script>
 
 <section>

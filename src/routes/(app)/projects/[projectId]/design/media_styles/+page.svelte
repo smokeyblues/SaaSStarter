@@ -20,7 +20,7 @@
       return () => clearTimeout(timer)
     }
   })
-  let designDetails = $derived(data.design ?? { media_design_styles_notes: "" })
+  let designDetails = $derived(data.designDetails ?? { media_design_styles_notes: "" })
 </script>
 
 <section>

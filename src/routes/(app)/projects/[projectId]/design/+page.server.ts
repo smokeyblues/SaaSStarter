@@ -1,4 +1,4 @@
-// src/routes/(app)/projects/[projectId]/treatment/+page.server.ts
+// src/routes/(app)/projects/[projectId]/design/+page.server.ts
 import { error, fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 import type { Database } from "../../../../../DatabaseDefinitions" // Adjust path if needed
@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({
 
   // Run all data fetching in parallel
   const [
-    { data: design, error: designError },
+    { data: designDetails, error: designError },
     { data: storyboards, error: storyboardsError },
     { data: wireframes, error: wireframesError },
     { data: assetsList, error: assetsListError },
@@ -102,7 +102,7 @@ export const load: PageServerLoad = async ({
 
   return {
     // Ensure we pass back null or data, never undefined for treatment
-    design: design ?? null,
+    designDetails: designDetails ?? null,
     storyboards: storyboards ?? [],
     wireframes: wireframes ?? [],
     assetsList: assetsList ?? [],

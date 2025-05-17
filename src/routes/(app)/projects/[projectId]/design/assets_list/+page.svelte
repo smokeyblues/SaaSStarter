@@ -21,7 +21,7 @@
     }
   })
   let designDetails = $derived(
-    data.design ?? { full_assets_list_description: "" },
+    data.designDetails ?? { full_assets_list_description: "" },
   )
 </script>
 
