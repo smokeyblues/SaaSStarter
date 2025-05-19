@@ -63,6 +63,7 @@
     "clsx": "^2.1.1",
     "handlebars": "^4.7.8",
     "lucide-react": "^0.487.0",
+    "nanoid": "^5.1.5",
     "posthog-js": "^1.234.7",
     "resend": "^3.5.0",
     "stripe": "^13.3.0",

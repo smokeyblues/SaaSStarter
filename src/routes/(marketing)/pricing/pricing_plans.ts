@@ -43,7 +43,7 @@ export const pricingPlans = [
     id: "producer_annual", // Annual Producer plan
     name: "Producer (Annual)",
     description: "Best value for committed teams planning for the year.",
-    price: "$250", // $250 / 12 = ~$20.83/mo (Approx 17% discount)
+    price: "$21", // $250 / 12 = ~$20.83/mo (Approx 17% discount)
     priceIntervalName: "per year",
     stripe_price_id: "price_1RDoyVItMT7HUULIAseMcZKY", // Needs a SEPARATE annual price ID in Stripe
     stripe_product_id: "prod_S85816nL7UywP8",
@@ -79,7 +79,7 @@ export const pricingPlans = [
     name: "Executive Producer (Annual)",
     description:
       "Unlock the full potential for your studio or large team annually.",
-    price: "$500", // $500 / 12 = ~$41.67/mo (Approx 17% discount)
+    price: "$42", // $500 / 12 = ~$41.67/mo (Approx 17% discount)
     priceIntervalName: "per year",
     stripe_price_id: "price_1RDoybItMT7HUULIMF7VIcJm",
     stripe_product_id: "prod_S858Mc87pqEjoS",

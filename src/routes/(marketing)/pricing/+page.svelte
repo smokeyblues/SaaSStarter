@@ -201,7 +201,11 @@
         ? "font-semibold text-primary"
         : "text-base-content/70"}>Annual</span
     >
-    <span class="badge badge-accent badge-outline ml-2">Save ~17%</span>
+    {#if interval === "annual"}
+      <span class="badge badge-primary badge-outline ml-2">Save ~17%</span>
+    {:else}
+      <span class="badge badge-accent badge-outline ml-2">Save ~17%</span>
+    {/if}
   </div>
 
   <!-- Pricing Cards - Pass filtered plans -->

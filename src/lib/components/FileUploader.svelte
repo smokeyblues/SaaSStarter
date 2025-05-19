@@ -10,11 +10,20 @@
     acceptedFileTypes = "*/*", // Default to all types, can be overridden
     actionUrl = "?/recordAssetUpload", // Default action, can be overridden
     onUploadSuccess, // Callback after DB record action succeeds
+    id, // Optional id to forward to the input for accessibility
+    /**
+     * The field name to use for the uploaded file in FormData.
+     * Use 'storyboardFiles' for storyboards, 'file' for generic, etc.
+     * Default: 'file'
+     */
+    fileFieldName = "file",
   }: {
     bucketName: string
     acceptedFileTypes?: string
-    actionUrl?: string // <-- New Prop
+    actionUrl?: string
     onUploadSuccess?: () => void
+    id?: string // Optional: forwarded to <input> for a11y
+    fileFieldName?: string
   } = $props()
 
   // Get Supabase client and user from context or page store
@@ -83,6 +92,9 @@
       formData.append("fileSize", selectedFile.size.toString())
       // Optional: Add more context if needed by the action
       // formData.append('context', 'treatment_script');
+
+      // Use the configured file field name (default: 'file')
+      formData.append(fileFieldName, selectedFile)
 
       // *** Use the actionUrl prop here ***
       const response = await fetch(actionUrl, {
@@ -175,6 +187,7 @@
       ? 'file-input-error'
       : ''}"
     accept={acceptedFileTypes}
+    id={id}
     onchange={handleFileSelect}
     disabled={isUploading}
   />

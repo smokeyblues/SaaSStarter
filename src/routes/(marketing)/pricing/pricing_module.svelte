@@ -72,7 +72,7 @@
           {#if plan.id !== "creative"}
             <span class="text-base-content/60"
               >/{plan.priceIntervalName.includes("year")
-                ? "year"
+                ? "month (billed annually)"
                 : "month"}</span
             >
           {/if}
