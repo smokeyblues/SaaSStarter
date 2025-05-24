@@ -86,7 +86,7 @@
 
 <div class="p-4 md:p-8 max-w-7xl mx-auto">
   <!-- Market Testing Prompt (Keep logic as is) -->
-  {#if data.sectionStatus?.business?.hasAudience && data.sectionStatus?.business?.hasGoals}
+  <!-- {#if data.sectionStatus?.business?.hasAudience && data.sectionStatus?.business?.hasGoals}
     <div class="alert alert-info mt-6 shadow-md max-w-4xl mx-auto">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-  {/if}
+  {/if} -->
 
   <!-- Content Area Placeholder -->
   <!-- The actual content for each section will be rendered -->
