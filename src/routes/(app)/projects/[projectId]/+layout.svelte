@@ -92,6 +92,13 @@
       isActive: data.sectionStatus?.functional?.isStarted,
       // isComplete: data.sectionStatus?.technology?.isStarted // Or more complex check later
     },
+    {
+      name: "Feedback",
+      slug: "feedback",
+      description: "Feedback from users...",
+      isActive: data.sectionStatus?.treatment?.hasSynopsis,
+      isComplete: false,
+    },
   ])
   // --- End Reactive Bible Sections ---
 
@@ -307,6 +314,12 @@
             class="link link-primary">Functional User Journeys</a
           >
           can help create effective test materials.
+          <br />
+          Remember to log any insights in the
+          <a
+            href="/projects/{data.project?.id}/feedback"
+            class="link link-primary">Feedback Log!</a
+          >
         </div>
       </div>
     </div>
