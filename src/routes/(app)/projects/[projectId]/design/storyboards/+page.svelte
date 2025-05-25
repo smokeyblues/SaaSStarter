@@ -90,6 +90,8 @@
     bucketName="project-assets"
     acceptedFileTypes="image/*"
     onUploadSuccess={handleUploadSuccess}
+    assetCategory="storyboard"
+    titleLabel="Create New Storyboard Collection"
   />
 
   <!-- Display Existing Storyboard Collections -->

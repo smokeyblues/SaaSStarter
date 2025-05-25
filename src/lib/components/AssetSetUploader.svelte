@@ -5,22 +5,29 @@
   import type { AssetCategory } from "$lib/types/assets"
   import type { Database } from "../../DatabaseDefinitions" // Adjust path
   import { nanoid } from "nanoid" // For unique file names
+  import { createEventDispatcher } from "svelte"
 
   // --- Props ---
   const {
-    actionUrl, // e.g., "?/createStoryboardCollection"
+    actionUrl, // e.g., "?/createStoryboardCollection" or "?/createWireframeSet"
     bucketName = "project-assets",
     acceptedFileTypes = "image/*",
     onUploadSuccess, // Callback after DB record action succeeds
+    assetCategory = "storyboard", // "storyboard" or "wireframe"
+    designSubsectionTag = "", // For wireframes: platform tag (e.g., "web", "mobile")
+    titleLabel = "Create New Collection", // Customizable form title
   }: {
     actionUrl: string
     bucketName?: string
     acceptedFileTypes?: string
-    onUploadSuccess?: (data?: any) => void // Optional: pass back action result
+    onUploadSuccess?: (data?: any) => void
+    assetCategory?: "storyboard" | "wireframe"
+    designSubsectionTag?: string
+    titleLabel?: string
   } = $props()
 
   // --- Supabase & User Context ---
-  const supabase: SupabaseClient<Database> = $page.data.supabase // Assumes supabase client is in $page.data
+  const supabase: SupabaseClient<Database> = $page.data.supabase
   const user = $derived($page.data.user)
   const projectId = $derived($page.params.projectId)
 
@@ -28,12 +35,26 @@
   let title = $state("")
   let description = $state("")
   let selectedFiles: File[] = $state([])
-  let assetCategory: AssetCategory = $state("storyboard")
   let formMessage = $state("")
   let formError = $state("")
   let isSubmitting = $state(false)
-  let overallProgress = $state(0) // For overall progress
-  let individualProgress: { [key: string]: number } = $state({}) // For individual file progress
+  let overallProgress = $state(0)
+  let individualProgress: { [key: string]: number } = $state({})
+  let localPlatformTag = $state(designSubsectionTag) // Local state for platform tag
+
+  const dispatch = createEventDispatcher()
+
+  // Sync localPlatformTag with prop when it changes
+  $effect(() => {
+    localPlatformTag = designSubsectionTag
+  })
+
+  // Dispatch platform tag changes
+  $effect(() => {
+    if (assetCategory === "wireframe") {
+      dispatch("platformTagChange", { value: localPlatformTag })
+    }
+  })
 
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement
@@ -55,11 +76,15 @@
       return
     }
     if (!title.trim()) {
-      formError = "Collection Title is required."
+      formError = "Title is required."
       return
     }
     if (!selectedFiles.length) {
       formError = "Please select at least one image."
+      return
+    }
+    if (assetCategory === "wireframe" && !localPlatformTag) {
+      formError = "Platform tag is required for wireframes."
       return
     }
 
@@ -78,13 +103,13 @@
     let filesUploadedSuccessfully = 0
 
     for (const file of selectedFiles) {
-      individualProgress[file.name] = 0 // Initialize progress for this file
+      individualProgress[file.name] = 0
 
       const fileExt = file.name.split(".").pop()
-      const uniqueFileName = `${projectId}/${user.id}/${assetCategory}/${nanoid()}-${file.name.replace(
+      const uniqueFileName = `${projectId}/${user.id}/${assetCategory}/${localPlatformTag ? `${localPlatformTag}/` : ""}${nanoid()}-${file.name.replace(
         /\.[^/.]+$/,
         "",
-      )}.${fileExt}` // Project/User/Category/nanoid-filename.ext
+      )}.${fileExt}`
 
       const uploadPromise = supabase.storage
         .from(bucketName)
@@ -146,6 +171,10 @@
       const actionFormData = new FormData()
       actionFormData.append("title", title)
       actionFormData.append("description", description)
+      // Add platform tag for wirefames
+      if (assetCategory === "wireframe") {
+        actionFormData.append("platform_tag", localPlatformTag)
+      }
       // Send uploaded assets metadata as a JSON string
       actionFormData.append(
         "uploadedAssets",
@@ -211,7 +240,8 @@
 
 <!-- Removed enctype, not needed for this approach -->
 <form class="card bg-base-200 shadow-md p-6 space-y-4" onsubmit={handleSubmit}>
-  <h2 class="text-xl font-medium">Create New Storyboard Collection</h2>
+  <h2 class="text-xl font-medium">{titleLabel}</h2>
+
   {#if formMessage}
     <div class="alert alert-success text-sm py-2 px-3">
       <svg
@@ -229,6 +259,7 @@
       <span>{formMessage}</span>
     </div>
   {/if}
+
   {#if formError}
     <div class="alert alert-error text-sm py-2 px-3">
       <svg
@@ -249,7 +280,7 @@
 
   <div>
     <label for="collection-title" class="label">
-      <span class="label-text">Collection Title</span>
+      <span class="label-text">Title</span>
     </label>
     <input
       type="text"
@@ -261,6 +292,25 @@
       autocomplete="off"
     />
   </div>
+
+  {#if assetCategory === "wireframe"}
+    <div>
+      <label for="platform-tag" class="label">
+        <span class="label-text">Platform</span>
+      </label>
+      <input
+        type="text"
+        id="platform-tag"
+        name="platform_tag"
+        bind:value={localPlatformTag}
+        class="input input-bordered w-full"
+        required
+        placeholder="e.g., web, mobile, tablet"
+        autocomplete="off"
+      />
+    </div>
+  {/if}
+
   <div>
     <label for="collection-description" class="label">
       <span class="label-text">Description (Optional)</span>
@@ -273,14 +323,17 @@
       rows="3"
     ></textarea>
   </div>
+
   <div>
     <label for="asset-files" class="label">
-      <span class="label-text">Storyboard Image(s)</span>
+      <span class="label-text"
+        >{assetCategory === "storyboard" ? "Storyboard" : "Wireframe"} Image(s)</span
+      >
     </label>
     <input
       id="asset-files"
       type="file"
-      name="storyboardFiles"
+      name="files"
       multiple
       accept={acceptedFileTypes}
       onchange={handleFileChange}
@@ -290,7 +343,9 @@
     />
     <div class="label">
       <span class="label-text-alt"
-        >Upload one or more images for this collection.</span
+        >Upload one or more images for this {assetCategory === "storyboard"
+          ? "collection"
+          : "set"}.</span
       >
     </div>
     {#if selectedFiles.length}
