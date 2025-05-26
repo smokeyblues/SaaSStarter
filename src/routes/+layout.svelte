@@ -7,19 +7,17 @@
   import { expoOut } from "svelte/easing"
   import { slide } from "svelte/transition"
 
-  import DynamicHeader from "$lib/components/DynamicHeader.svelte";
-  import DynamicFooter from "$lib/components/DynamicFooter.svelte";
-  import type { LayoutData } from "./$types"; // Import LayoutData
-
-  export let data: LayoutData; // Receive data from server load
-
-  $: loggedIn = !!data.session?.user; // Determine loggedIn status (or use data.user)
+  import DynamicHeader from "$lib/components/DynamicHeader.svelte"
+  import DynamicFooter from "$lib/components/DynamicFooter.svelte"
+  import type { LayoutData } from "./$types"
 
   interface Props {
+    data: LayoutData
     children?: import("svelte").Snippet
   }
 
-  let { children }: Props = $props()
+  let { data, children }: Props = $props()
+  let loggedIn = $derived(!!data.session?.user)
 
   onMount(() => {
     if (browser) {
