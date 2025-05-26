@@ -569,7 +569,7 @@ export const actions: Actions = {
       .eq("id", assetId)
     if (dbError) {
       console.error(
-        `Error deleting storyboard asset record (${assetId}):`,
+        `Error deleting wireframe asset record (${assetId}):`,
         dbError,
       )
       return fail(500, {

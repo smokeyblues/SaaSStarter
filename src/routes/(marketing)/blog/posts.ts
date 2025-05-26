@@ -17,21 +17,9 @@ const blogPosts: BlogPost[] = [
   {
     // title: "Example Blog Post",
     title: "What is Transmedia Storytelling?",
-    description: "Telling One Story Through Many Media.",
+    description: "Telling One Story across Multiple Platforms.",
     link: "/blog/what_is_transmedia_storytelling",
     date: "2025-04-03",
-  },
-  {
-    title: "How we built a beautiful 41kb SaaS website with this template",
-    description: "How to use this template you to bootstrap your own site.",
-    link: "/blog/how_we_built_our_41kb_saas_website",
-    date: "2024-03-10",
-  },
-  {
-    title: "Example Blog Post 2",
-    description: "Even more example content!",
-    link: "/blog/awesome_post",
-    date: "2022-9-23",
   },
 ]
 
