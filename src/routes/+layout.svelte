@@ -6,6 +6,15 @@
   import { navigating } from "$app/stores"
   import { expoOut } from "svelte/easing"
   import { slide } from "svelte/transition"
+
+  import DynamicHeader from "$lib/components/DynamicHeader.svelte";
+  import DynamicFooter from "$lib/components/DynamicFooter.svelte";
+  import type { LayoutData } from "./$types"; // Import LayoutData
+
+  export let data: LayoutData; // Receive data from server load
+
+  $: loggedIn = !!data.session?.user; // Determine loggedIn status (or use data.user)
+
   interface Props {
     children?: import("svelte").Snippet
   }
@@ -36,4 +45,9 @@
     in:slide={{ delay: 100, duration: 12000, axis: "x", easing: expoOut }}
   ></div>
 {/if}
+
+<DynamicHeader {loggedIn} />
+
 {@render children?.()}
+
+<DynamicFooter {loggedIn} />
