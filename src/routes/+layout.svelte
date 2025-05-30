@@ -23,7 +23,7 @@
     if (browser) {
       posthog.init("phc_bzusV1hfMzSbTeMmMI5wAUCrIYbdN49hUZcPm8y9B7W", {
         api_host: "https://us.i.posthog.com",
-        person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+        person_profiles: "always", // or 'always' to create profiles for anonymous users as well
       })
     }
     return
