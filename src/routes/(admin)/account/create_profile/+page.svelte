@@ -18,7 +18,7 @@
     form: FormAccountUpdateResult
   }
 
-  let { data, form }: Props = $props()
+  let { data, form } = $props()
 
   let { user, profile } = data
 
