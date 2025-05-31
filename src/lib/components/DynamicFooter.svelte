@@ -1,7 +1,7 @@
 <script lang="ts">
   // This prop is not used yet, but included for future customization.
   // svelte-ignore export_let_unused
-  // export let loggedIn: boolean = false;
+  export let loggedIn: boolean = false
 </script>
 
 <!-- Spacer grows so the footer can be at bottom on short pages -->
