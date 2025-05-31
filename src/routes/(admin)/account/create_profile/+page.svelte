@@ -1,7 +1,6 @@
 <script lang="ts">
   import { applyAction, enhance } from "$app/forms"
   import type { SubmitFunction } from "@sveltejs/kit"
-  import { goto } from "$app/navigation"
   import "../../../../app.css"
 
   interface User {
@@ -39,9 +38,6 @@
       await update({ reset: false })
       await applyAction(result)
       loading = false
-      // if (result.type === "success") {
-      //   goto("/dashboard")
-      // }
     }
   }
 </script>
