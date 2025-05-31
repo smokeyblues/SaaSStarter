@@ -141,11 +141,6 @@
   )
 </script>
 
-<!-- <svelte:head>
-  <title>Pricing</title>
-  <meta name="description" content="Pricing - {WebsiteName}" />
-</svelte:head> -->
-
 <svelte:head>
   <title>Pricing - {WebsiteName}</title>
   <meta

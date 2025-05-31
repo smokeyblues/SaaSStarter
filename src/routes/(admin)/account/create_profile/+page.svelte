@@ -1,6 +1,7 @@
 <script lang="ts">
   import { applyAction, enhance } from "$app/forms"
   import type { SubmitFunction } from "@sveltejs/kit"
+  import { goto } from "$app/navigation"
   import "../../../../app.css"
 
   interface User {
@@ -38,6 +39,9 @@
       await update({ reset: false })
       await applyAction(result)
       loading = false
+      // if (result.type === "success") {
+      //   goto("/dashboard")
+      // }
     }
   }
 </script>
@@ -77,7 +81,7 @@
 
         <div class="mt-4">
           <label for="companyName">
-            <span class="text-l text-center">Company Name</span>
+            <span class="text-l text-center">Company Name (optional)</span>
           </label>
           <input
             id="companyName"
@@ -94,7 +98,7 @@
 
         <div class="mt-4">
           <label for="website">
-            <span class="text-l text-center">Company Website</span>
+            <span class="text-l text-center">Company Website (optional)</span>
           </label>
           <input
             id="website"
@@ -127,7 +131,9 @@
       <div class="text-sm text-primary mt-14">
         You are logged in as {user?.email}.
         <br />
-        <a class="underline" href="/account/sign_out"> Sign out </a>
+        <a class="underline text-red-500" href="/account/sign_out">
+          Sign out
+        </a>
       </div>
     </div>
   </div>

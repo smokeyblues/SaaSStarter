@@ -16,7 +16,7 @@
         View our <a href="/pricing" target="_blank" class="link">pricing page</a
         > for details.
       </div>
-      <PricingModule callToAction="Select Plan" />
+      <PricingModule callToAction="Select Plan" plansToDisplay={[]} />
     </div>
   </div>
 </div>

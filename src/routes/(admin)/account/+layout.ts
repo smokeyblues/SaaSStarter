@@ -75,12 +75,6 @@ export const _hasFullProfile = (
   if (!profile.full_name) {
     return false
   }
-  if (!profile.company_name) {
-    return false
-  }
-  if (!profile.website) {
-    return false
-  }
-
+  // company_name and website are now optional, so do not require them
   return true
 }
