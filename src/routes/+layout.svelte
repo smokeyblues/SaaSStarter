@@ -14,7 +14,7 @@
   // Combined and corrected $props() call
   let { data, children }: { data: LayoutData; children?: import("svelte").Snippet } = $props();
 
-  $: loggedIn = !!data.session?.user; // Determine loggedIn status (or use data.user)
+  const loggedIn = $derived(!!data.session?.user); // Corrected line
 
   onMount(() => {
     if (browser) {
