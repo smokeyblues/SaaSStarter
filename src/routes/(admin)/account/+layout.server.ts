@@ -16,7 +16,9 @@ export const load: LayoutServerLoad = async ({ cookies, parent }) => { // Add pa
   // under (admin)/account are accessible by users who are not fully "app-active" yet (e.g. create_profile).
 
   return {
-    ...parentData, // Pass down session, user, supabase
-    cookies: cookies.getAll(), // Add cookies from this layout
+    // Explicitly pass only serializable data from parentData
+    session: parentData.session,
+    user: parentData.user,
+    cookies: cookies.getAll(), // cookies are serializable
   };
 };

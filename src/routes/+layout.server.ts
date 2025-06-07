@@ -1,12 +1,11 @@
 // src/routes/+layout.server.ts
 import type { LayoutServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession, supabase } }) => { // Add supabase here
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession } }) => { // Remove supabase from locals destructuring
   const { session, user } = await safeGetSession();
 
   return {
     session,
-    user,
-    supabase // Return supabase
+    user, // Only return serializable data
   };
 };

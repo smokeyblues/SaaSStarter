@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Auth } from "@supabase/auth-ui-svelte"
   import { sharedAppearance, oauthProviders } from "../login_config"
+  import { supabase } from "$lib/supabaseClient"; // Import browser client
 
-  let { data } = $props()
+  let { data } = $props() // data contains 'url', 'session', 'user'
 </script>
 
 <svelte:head>
@@ -11,7 +12,7 @@
 
 <h1 class="text-2xl font-bold mb-6">Sign Up</h1>
 <Auth
-  supabaseClient={data.supabase}
+  supabaseClient={supabase} <!-- Use imported browser client -->
   view="sign_up"
   redirectTo={`${data.url}/auth/callback`}
   showLinks={false}

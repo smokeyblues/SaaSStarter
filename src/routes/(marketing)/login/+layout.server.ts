@@ -11,7 +11,9 @@ export const load: LayoutServerLoad = async ({ url, parent }) => { // Add parent
   }
 
   return {
-    ...parentData, // Pass down all data from parent (session, user, supabase)
-    url: url.origin, // Add/override url specific to this layout
+    // Explicitly pass only serializable data from parentData
+    session: parentData.session,
+    user: parentData.user,
+    url: url.origin,
   };
 };
