@@ -61,20 +61,23 @@
       <div
         class="text-lg md:text-xl font-bold uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-3 md:mb-5 pb-1"
       >
-        Your Transmedia IDE
+        The Transmedia IDE
       </div>
 
       <h1 class="text-4xl md:text-6xl font-bold mb-4" style="line-height: 1.2;">
-        Orchestrate Your Transmedia Universe:
-        <span class="text-primary">Plan</span>,
-        <span class="text-secondary">Engage</span>,
-        <span class="text-accent">Scale</span>.
+        Unlock Your Story's Potential:
+        <span class="text-primary">Guided</span>,
+        <span class="text-secondary">Gamified</span>,
+        <span class="text-info">Geared for Success</span>
       </h1>
 
       <p class="py-6 text-lg md:text-xl text-base-content/80">
-        The strategic platform for visionary creators. Structure your narrative
-        world, cultivate your audience, and build investable intellectual
-        property beyond traditional limits.
+        Master the art of transmedia storytelling through an engaging journey.
+      </p>
+      <p class="py-6 text-lg md:text-xl text-base-content/80">
+        The Transmedia IDE that transforms planning into an adventure. Learn to
+        structure your narrative world, cultivate a loyal fanbase, and build
+        investable intellectual property beyond traditional limits.
       </p>
 
       <div
