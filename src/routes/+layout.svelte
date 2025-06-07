@@ -11,21 +11,16 @@
   import DynamicFooter from "$lib/components/DynamicFooter.svelte";
   import type { LayoutData } from "./$types"; // Import LayoutData
 
-  export let data: LayoutData; // Receive data from server load
+  // Combined and corrected $props() call
+  let { data, children }: { data: LayoutData; children?: import("svelte").Snippet } = $props();
 
   $: loggedIn = !!data.session?.user; // Determine loggedIn status (or use data.user)
-
-  interface Props {
-    children?: import("svelte").Snippet
-  }
-
-  let { children }: Props = $props()
 
   onMount(() => {
     if (browser) {
       posthog.init("phc_bzusV1hfMzSbTeMmMI5wAUCrIYbdN49hUZcPm8y9B7W", {
         api_host: "https://us.i.posthog.com",
-        person_profiles: "always", // or 'always' to create profiles for anonymous users as well
+        person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
       })
     }
     return
