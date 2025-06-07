@@ -7,23 +7,20 @@
   import { expoOut } from "svelte/easing"
   import { slide } from "svelte/transition"
 
-  import DynamicHeader from "$lib/components/DynamicHeader.svelte"
-  import DynamicFooter from "$lib/components/DynamicFooter.svelte"
-  import type { LayoutData } from "./$types"
+  import DynamicHeader from "$lib/components/DynamicHeader.svelte";
+  import DynamicFooter from "$lib/components/DynamicFooter.svelte";
+  import type { LayoutData } from "./$types"; // Import LayoutData
 
-  interface Props {
-    data: LayoutData
-    children?: import("svelte").Snippet
-  }
+  // Combined and corrected $props() call
+  let { data, children }: { data: LayoutData; children?: import("svelte").Snippet } = $props();
 
-  let { data, children }: Props = $props()
-  let loggedIn = $derived(!!data.session?.user)
+  const loggedIn = $derived(!!data.session?.user); // Corrected line
 
   onMount(() => {
     if (browser) {
       posthog.init("phc_bzusV1hfMzSbTeMmMI5wAUCrIYbdN49hUZcPm8y9B7W", {
         api_host: "https://us.i.posthog.com",
-        person_profiles: "always", // or 'always' to create profiles for anonymous users as well
+        person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
       })
     }
     return

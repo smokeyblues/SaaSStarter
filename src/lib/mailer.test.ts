@@ -57,7 +57,7 @@ describe("mailer", () => {
       await mailer.sendUserEmail({
         user: mockUser as User,
         subject: "Test",
-        from_email: "no_reply@mail.nanowritlabs.com",
+        from_email: "test@example.com",
         template_name: "welcome_email",
         template_properties: {
           companyName: "Nanowrit Labs",
@@ -86,8 +86,8 @@ describe("mailer", () => {
 
       await mailer.sendUserEmail({
         user: mockUser as User,
-        subject: "Welcome to Nanowrit Labs",
-        from_email: "no_reply@mail.nanowritlabs.com",
+        subject: "Test",
+        from_email: "test@example.com",
         template_name: "welcome_email",
         template_properties: {},
       })
@@ -107,32 +107,28 @@ describe("mailer", () => {
   describe("sendTemplatedEmail", () => {
     it("sends templated email", async () => {
       await mailer.sendTemplatedEmail({
-        subject: "Welcome to Nanowrit Labs",
-        from_email: "no_reply@mail.nanowritlabs.com",
+        subject: "Test subject",
+        from_email: "from@example.com",
         to_emails: ["to@example.com"],
         template_name: "welcome_email",
         template_properties: {
-          companyName: "Nanowrit Labs",
-          WebsiteBaseUrl: "https://nanowritlabs.com",
+          companyName: "Test Company",
+          WebsiteBaseUrl: "https://test.com",
         },
       })
 
       expect(mockSend).toHaveBeenCalled()
       const email = mockSend.mock.calls[0][0]
-      expect(email.from).toEqual("no_reply@mail.nanowritlabs.com")
+      expect(email.from).toEqual("from@example.com")
       expect(email.to).toEqual(["to@example.com"])
-      expect(email.subject).toEqual("Welcome to Nanowrit Labs")
-      expect(email.text).toContain(
-        "A big welcome to the Nanowrit Labs community!",
-      )
-      expect(email.html).toContain(
-        "A big welcome to the Nanowrit Labs community!",
-      )
+      expect(email.subject).toEqual("Test subject")
+      expect(email.text).toContain("This is a quick sample of a welcome email")
+      expect(email.html).toContain("This is a quick sample of a welcome email")
       expect(email.html).toContain("<html")
-      expect(email.html).toContain("https://nanowritlabs.com")
-      expect(email.html).toContain("Nanowrit Labs")
-      expect(email.text).toContain("https://nanowritlabs.com")
-      expect(email.text).toContain("Nanowrit Labs")
+      expect(email.html).toContain("https://test.com")
+      expect(email.html).toContain("Test Company")
+      expect(email.text).toContain("https://test.com")
+      expect(email.text).toContain("Test Company")
     })
   })
 })

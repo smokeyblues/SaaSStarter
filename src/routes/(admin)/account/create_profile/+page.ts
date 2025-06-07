@@ -1,23 +1,13 @@
-import { _hasFullProfile } from "../+layout"
+import { _hasFullProfile } from "../+layout.js"
 import { redirect } from "@sveltejs/kit"
 
 export async function load({ parent }) {
-  const parentData = await parent()
+  const data = await parent()
 
   // They completed their profile! Redirect to "Select a Plan" screen.
-  if (_hasFullProfile(parentData?.profile)) {
+  if (_hasFullProfile(data?.profile)) {
     redirect(303, "/account/select_plan")
   }
 
-  return {
-    data: {
-      user: parentData.user,
-      profile: parentData.profile,
-    },
-    form: {
-      fullName: parentData.profile?.full_name ?? "",
-      companyName: parentData.profile?.company_name ?? "",
-      website: parentData.profile?.website ?? "",
-    },
-  }
+  return data
 }
